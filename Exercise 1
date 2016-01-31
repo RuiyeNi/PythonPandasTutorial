@@ -1,0 +1,4236 @@
+{
+ "cells": [
+  {
+   "cell_type": "code",
+   "execution_count": 1,
+   "metadata": {
+    "collapsed": false
+   },
+   "outputs": [],
+   "source": [
+    "%matplotlib inline\n",
+    "import pandas as pd"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 2,
+   "metadata": {
+    "collapsed": false
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/html": [
+       "<style>body {\n",
+       "    margin: 0;\n",
+       "    font-family: Helvetica;\n",
+       "}\n",
+       "table.dataframe {\n",
+       "    border-collapse: collapse;\n",
+       "    border: none;\n",
+       "}\n",
+       "table.dataframe tr {\n",
+       "    border: none;\n",
+       "}\n",
+       "table.dataframe td, table.dataframe th {\n",
+       "    margin: 0;\n",
+       "    border: 1px solid white;\n",
+       "    padding-left: 0.25em;\n",
+       "    padding-right: 0.25em;\n",
+       "}\n",
+       "table.dataframe th:not(:empty) {\n",
+       "    background-color: #fec;\n",
+       "    text-align: left;\n",
+       "    font-weight: normal;\n",
+       "}\n",
+       "table.dataframe tr:nth-child(2) th:empty {\n",
+       "    border-left: none;\n",
+       "    border-right: 1px dashed #888;\n",
+       "}\n",
+       "table.dataframe td {\n",
+       "    border: 2px solid #ccf;\n",
+       "    background-color: #f4f4ff;\n",
+       "}\n",
+       "h3 {\n",
+       "    color: white;\n",
+       "    background-color: black;\n",
+       "    padding: 0.5em;\n",
+       "}\n",
+       "</style>"
+      ],
+      "text/plain": [
+       "<IPython.core.display.HTML object>"
+      ]
+     },
+     "execution_count": 2,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "from IPython.core.display import HTML\n",
+    "css = open('style-table.css').read() + open('style-notebook.css').read()\n",
+    "HTML('<style>{}</style>'.format(css))"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 3,
+   "metadata": {
+    "collapsed": false
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/html": [
+       "<div>\n",
+       "<table border=\"1\" class=\"dataframe\">\n",
+       "  <thead>\n",
+       "    <tr style=\"text-align: right;\">\n",
+       "      <th></th>\n",
+       "      <th>title</th>\n",
+       "      <th>year</th>\n",
+       "    </tr>\n",
+       "  </thead>\n",
+       "  <tbody>\n",
+       "    <tr>\n",
+       "      <th>0</th>\n",
+       "      <td>Torab al-ghoraba</td>\n",
+       "      <td>1998</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>1</th>\n",
+       "      <td>Long zai tian ya</td>\n",
+       "      <td>1989</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>2</th>\n",
+       "      <td>Jewtopia</td>\n",
+       "      <td>2012</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>3</th>\n",
+       "      <td>Baby Face</td>\n",
+       "      <td>1959</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>4</th>\n",
+       "      <td>The Lucky Break</td>\n",
+       "      <td>2014</td>\n",
+       "    </tr>\n",
+       "  </tbody>\n",
+       "</table>\n",
+       "</div>"
+      ],
+      "text/plain": [
+       "              title  year\n",
+       "0  Torab al-ghoraba  1998\n",
+       "1  Long zai tian ya  1989\n",
+       "2          Jewtopia  2012\n",
+       "3         Baby Face  1959\n",
+       "4   The Lucky Break  2014"
+      ]
+     },
+     "execution_count": 3,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "titles = pd.DataFrame.from_csv('data/titles.csv', index_col=None, encoding = 'utf-8')\n",
+    "titles.head()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 4,
+   "metadata": {
+    "collapsed": false
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/html": [
+       "<div>\n",
+       "<table border=\"1\" class=\"dataframe\">\n",
+       "  <thead>\n",
+       "    <tr style=\"text-align: right;\">\n",
+       "      <th></th>\n",
+       "      <th>title</th>\n",
+       "      <th>year</th>\n",
+       "      <th>name</th>\n",
+       "      <th>type</th>\n",
+       "      <th>character</th>\n",
+       "      <th>n</th>\n",
+       "    </tr>\n",
+       "  </thead>\n",
+       "  <tbody>\n",
+       "    <tr>\n",
+       "      <th>0</th>\n",
+       "      <td>Suuri illusioni</td>\n",
+       "      <td>1985</td>\n",
+       "      <td>Homo $</td>\n",
+       "      <td>actor</td>\n",
+       "      <td>Guests</td>\n",
+       "      <td>22</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>1</th>\n",
+       "      <td>Gangsta Rap: The Glockumentary</td>\n",
+       "      <td>2007</td>\n",
+       "      <td>Too $hort</td>\n",
+       "      <td>actor</td>\n",
+       "      <td>Himself</td>\n",
+       "      <td>NaN</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>2</th>\n",
+       "      <td>Menace II Society</td>\n",
+       "      <td>1993</td>\n",
+       "      <td>Too $hort</td>\n",
+       "      <td>actor</td>\n",
+       "      <td>Lew-Loc</td>\n",
+       "      <td>27</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>3</th>\n",
+       "      <td>Porndogs: The Adventures of Sadie</td>\n",
+       "      <td>2009</td>\n",
+       "      <td>Too $hort</td>\n",
+       "      <td>actor</td>\n",
+       "      <td>Bosco</td>\n",
+       "      <td>3</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>4</th>\n",
+       "      <td>Stop Pepper Palmer</td>\n",
+       "      <td>2014</td>\n",
+       "      <td>Too $hort</td>\n",
+       "      <td>actor</td>\n",
+       "      <td>Himself</td>\n",
+       "      <td>NaN</td>\n",
+       "    </tr>\n",
+       "  </tbody>\n",
+       "</table>\n",
+       "</div>"
+      ],
+      "text/plain": [
+       "                               title  year       name   type character   n\n",
+       "0                    Suuri illusioni  1985     Homo $  actor    Guests  22\n",
+       "1     Gangsta Rap: The Glockumentary  2007  Too $hort  actor   Himself NaN\n",
+       "2                  Menace II Society  1993  Too $hort  actor   Lew-Loc  27\n",
+       "3  Porndogs: The Adventures of Sadie  2009  Too $hort  actor     Bosco   3\n",
+       "4                 Stop Pepper Palmer  2014  Too $hort  actor   Himself NaN"
+      ]
+     },
+     "execution_count": 4,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "cast = pd.DataFrame.from_csv('data/cast.csv', index_col=None,encoding = 'utf-8')\n",
+    "cast.head()"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {
+    "collapsed": true
+   },
+   "source": [
+    "### How many movies are listed in the titles dataframe?"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 5,
+   "metadata": {
+    "collapsed": false
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "216537"
+      ]
+     },
+     "execution_count": 5,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "len(titles)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {
+    "collapsed": true
+   },
+   "source": [
+    "### What are the earliest two films listed in the titles dataframe?"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 6,
+   "metadata": {
+    "collapsed": false
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/html": [
+       "<div>\n",
+       "<table border=\"1\" class=\"dataframe\">\n",
+       "  <thead>\n",
+       "    <tr style=\"text-align: right;\">\n",
+       "      <th></th>\n",
+       "      <th>title</th>\n",
+       "      <th>year</th>\n",
+       "    </tr>\n",
+       "  </thead>\n",
+       "  <tbody>\n",
+       "    <tr>\n",
+       "      <th>48057</th>\n",
+       "      <td>Miss Jerry</td>\n",
+       "      <td>1894</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>153623</th>\n",
+       "      <td>Reproduction of the Corbett and Jeffries Fight</td>\n",
+       "      <td>1899</td>\n",
+       "    </tr>\n",
+       "  </tbody>\n",
+       "</table>\n",
+       "</div>"
+      ],
+      "text/plain": [
+       "                                                 title  year\n",
+       "48057                                       Miss Jerry  1894\n",
+       "153623  Reproduction of the Corbett and Jeffries Fight  1899"
+      ]
+     },
+     "execution_count": 6,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "titlessort = titles.sort_values('year')\n",
+    "titlessort[:2]"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 7,
+   "metadata": {
+    "collapsed": false
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/html": [
+       "<div>\n",
+       "<table border=\"1\" class=\"dataframe\">\n",
+       "  <thead>\n",
+       "    <tr style=\"text-align: right;\">\n",
+       "      <th></th>\n",
+       "      <th>title</th>\n",
+       "      <th>year</th>\n",
+       "    </tr>\n",
+       "  </thead>\n",
+       "  <tbody>\n",
+       "    <tr>\n",
+       "      <th>48057</th>\n",
+       "      <td>Miss Jerry</td>\n",
+       "      <td>1894</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>153623</th>\n",
+       "      <td>Reproduction of the Corbett and Jeffries Fight</td>\n",
+       "      <td>1899</td>\n",
+       "    </tr>\n",
+       "  </tbody>\n",
+       "</table>\n",
+       "</div>"
+      ],
+      "text/plain": [
+       "                                                 title  year\n",
+       "48057                                       Miss Jerry  1894\n",
+       "153623  Reproduction of the Corbett and Jeffries Fight  1899"
+      ]
+     },
+     "execution_count": 7,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "titlessort.head(2)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {
+    "collapsed": true
+   },
+   "source": [
+    "### How many movies have the title \"Hamlet\"?"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 8,
+   "metadata": {
+    "collapsed": false
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "41"
+      ]
+     },
+     "execution_count": 8,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "titlesHamlet = titles.title.str.startswith('Hamlet')\n",
+    "len(titles[titlesHamlet])"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 9,
+   "metadata": {
+    "collapsed": false
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "19"
+      ]
+     },
+     "execution_count": 9,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "len(titles[titles.title == 'Hamlet'])"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {
+    "collapsed": true
+   },
+   "source": [
+    "### How many movies are titled \"North by Northwest\"?"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 10,
+   "metadata": {
+    "collapsed": false
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "1"
+      ]
+     },
+     "execution_count": 10,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "len(titles[titles.title == 'North by Northwest'])"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {
+    "collapsed": true
+   },
+   "source": [
+    "### When was the first movie titled \"Hamlet\" made?"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 11,
+   "metadata": {
+    "collapsed": false
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/html": [
+       "<div>\n",
+       "<table border=\"1\" class=\"dataframe\">\n",
+       "  <thead>\n",
+       "    <tr style=\"text-align: right;\">\n",
+       "      <th></th>\n",
+       "      <th>title</th>\n",
+       "      <th>year</th>\n",
+       "    </tr>\n",
+       "  </thead>\n",
+       "  <tbody>\n",
+       "    <tr>\n",
+       "      <th>135546</th>\n",
+       "      <td>Hamlet</td>\n",
+       "      <td>1910</td>\n",
+       "    </tr>\n",
+       "  </tbody>\n",
+       "</table>\n",
+       "</div>"
+      ],
+      "text/plain": [
+       "         title  year\n",
+       "135546  Hamlet  1910"
+      ]
+     },
+     "execution_count": 11,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "titles[titles.title == 'Hamlet'].sort_values('year').head(1)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {
+    "collapsed": true
+   },
+   "source": [
+    "### List all of the \"Treasure Island\" movies from earliest to most recent."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 12,
+   "metadata": {
+    "collapsed": false
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/html": [
+       "<div>\n",
+       "<table border=\"1\" class=\"dataframe\">\n",
+       "  <thead>\n",
+       "    <tr style=\"text-align: right;\">\n",
+       "      <th></th>\n",
+       "      <th>title</th>\n",
+       "      <th>year</th>\n",
+       "    </tr>\n",
+       "  </thead>\n",
+       "  <tbody>\n",
+       "    <tr>\n",
+       "      <th>211730</th>\n",
+       "      <td>Treasure Island</td>\n",
+       "      <td>1918</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>47230</th>\n",
+       "      <td>Treasure Island</td>\n",
+       "      <td>1920</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>84062</th>\n",
+       "      <td>Treasure Island</td>\n",
+       "      <td>1934</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>189248</th>\n",
+       "      <td>Treasure Island</td>\n",
+       "      <td>1950</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>152272</th>\n",
+       "      <td>Treasure Island</td>\n",
+       "      <td>1972</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>90433</th>\n",
+       "      <td>Treasure Island</td>\n",
+       "      <td>1973</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>10481</th>\n",
+       "      <td>Treasure Island</td>\n",
+       "      <td>1985</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>109135</th>\n",
+       "      <td>Treasure Island</td>\n",
+       "      <td>1999</td>\n",
+       "    </tr>\n",
+       "  </tbody>\n",
+       "</table>\n",
+       "</div>"
+      ],
+      "text/plain": [
+       "                  title  year\n",
+       "211730  Treasure Island  1918\n",
+       "47230   Treasure Island  1920\n",
+       "84062   Treasure Island  1934\n",
+       "189248  Treasure Island  1950\n",
+       "152272  Treasure Island  1972\n",
+       "90433   Treasure Island  1973\n",
+       "10481   Treasure Island  1985\n",
+       "109135  Treasure Island  1999"
+      ]
+     },
+     "execution_count": 12,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "titles[titles.title == 'Treasure Island'].sort_values('year')"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {
+    "collapsed": true
+   },
+   "source": [
+    "### How many movies were made in the year 1950?"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 13,
+   "metadata": {
+    "collapsed": false
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "1037"
+      ]
+     },
+     "execution_count": 13,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "len(titles[titles.year == 1950])"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {
+    "collapsed": true
+   },
+   "source": [
+    "### How many movies were made in the year 1960?"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 14,
+   "metadata": {
+    "collapsed": false
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "1476"
+      ]
+     },
+     "execution_count": 14,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "len(titles[titles.year == 1960])"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {
+    "collapsed": true
+   },
+   "source": [
+    "### How many movies were made from 1950 through 1959?"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 15,
+   "metadata": {
+    "collapsed": false
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "12197"
+      ]
+     },
+     "execution_count": 15,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "len(titles[(titles.year >= 1950) & (titles.year <=1959)])"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {
+    "collapsed": true
+   },
+   "source": [
+    "### In what years has a movie titled \"Batman\" been released?"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 16,
+   "metadata": {
+    "collapsed": false
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "6268      1943\n",
+       "173516    1989\n",
+       "Name: year, dtype: int64"
+      ]
+     },
+     "execution_count": 16,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "titles[titles.title == 'Batman'].year"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {
+    "collapsed": true
+   },
+   "source": [
+    "### How many roles were there in the movie \"Inception\"?"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 17,
+   "metadata": {
+    "collapsed": false
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "75"
+      ]
+     },
+     "execution_count": 17,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "len(cast[cast.title == 'Inception'])"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {
+    "collapsed": true
+   },
+   "source": [
+    "### How many roles in the movie \"Inception\" are NOT ranked by an \"n\" value?"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 18,
+   "metadata": {
+    "collapsed": false
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "24"
+      ]
+     },
+     "execution_count": 18,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "c = cast\n",
+    "c = c[c.title == 'Inception']\n",
+    "len(c[c.n.isnull()])"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {
+    "collapsed": true
+   },
+   "source": [
+    "### But how many roles in the movie \"Inception\" did receive an \"n\" value?"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 19,
+   "metadata": {
+    "collapsed": false
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "51"
+      ]
+     },
+     "execution_count": 19,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "c = cast\n",
+    "c = c[c.title == 'Inception']\n",
+    "len(c[c.n.notnull()])"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {
+    "collapsed": true
+   },
+   "source": [
+    "### Display the cast of \"North by Northwest\" in their correct \"n\"-value order, ignoring roles that did not earn a numeric \"n\" value."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 20,
+   "metadata": {
+    "collapsed": false
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/html": [
+       "<div>\n",
+       "<table border=\"1\" class=\"dataframe\">\n",
+       "  <thead>\n",
+       "    <tr style=\"text-align: right;\">\n",
+       "      <th></th>\n",
+       "      <th>title</th>\n",
+       "      <th>year</th>\n",
+       "      <th>name</th>\n",
+       "      <th>type</th>\n",
+       "      <th>character</th>\n",
+       "      <th>n</th>\n",
+       "    </tr>\n",
+       "  </thead>\n",
+       "  <tbody>\n",
+       "    <tr>\n",
+       "      <th>789568</th>\n",
+       "      <td>North by Northwest</td>\n",
+       "      <td>1959</td>\n",
+       "      <td>Cary Grant</td>\n",
+       "      <td>actor</td>\n",
+       "      <td>Roger O. Thornhill</td>\n",
+       "      <td>1</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>3150433</th>\n",
+       "      <td>North by Northwest</td>\n",
+       "      <td>1959</td>\n",
+       "      <td>Eva Marie Saint</td>\n",
+       "      <td>actress</td>\n",
+       "      <td>Eve Kendall</td>\n",
+       "      <td>2</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>1319736</th>\n",
+       "      <td>North by Northwest</td>\n",
+       "      <td>1959</td>\n",
+       "      <td>James Mason</td>\n",
+       "      <td>actor</td>\n",
+       "      <td>Phillip Vandamm</td>\n",
+       "      <td>3</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>2835733</th>\n",
+       "      <td>North by Northwest</td>\n",
+       "      <td>1959</td>\n",
+       "      <td>Jessie Royce Landis</td>\n",
+       "      <td>actress</td>\n",
+       "      <td>Clara Thornhill</td>\n",
+       "      <td>4</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>322095</th>\n",
+       "      <td>North by Northwest</td>\n",
+       "      <td>1959</td>\n",
+       "      <td>Leo G. Carroll</td>\n",
+       "      <td>actor</td>\n",
+       "      <td>The Professor</td>\n",
+       "      <td>5</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>2742072</th>\n",
+       "      <td>North by Northwest</td>\n",
+       "      <td>1959</td>\n",
+       "      <td>Josephine Hutchinson</td>\n",
+       "      <td>actress</td>\n",
+       "      <td>Mrs. Townsend</td>\n",
+       "      <td>6</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>1536035</th>\n",
+       "      <td>North by Northwest</td>\n",
+       "      <td>1959</td>\n",
+       "      <td>Philip Ober</td>\n",
+       "      <td>actor</td>\n",
+       "      <td>Lester Townsend</td>\n",
+       "      <td>7</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>1154420</th>\n",
+       "      <td>North by Northwest</td>\n",
+       "      <td>1959</td>\n",
+       "      <td>Martin Landau</td>\n",
+       "      <td>actor</td>\n",
+       "      <td>Leonard</td>\n",
+       "      <td>8</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>2214182</th>\n",
+       "      <td>North by Northwest</td>\n",
+       "      <td>1959</td>\n",
+       "      <td>Adam Williams</td>\n",
+       "      <td>actor</td>\n",
+       "      <td>Valerian</td>\n",
+       "      <td>9</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>1640544</th>\n",
+       "      <td>North by Northwest</td>\n",
+       "      <td>1959</td>\n",
+       "      <td>Edward Platt</td>\n",
+       "      <td>actor</td>\n",
+       "      <td>Victor Larrabee</td>\n",
+       "      <td>10</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>602998</th>\n",
+       "      <td>North by Northwest</td>\n",
+       "      <td>1959</td>\n",
+       "      <td>Robert Ellenstein</td>\n",
+       "      <td>actor</td>\n",
+       "      <td>Licht</td>\n",
+       "      <td>11</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>2077139</th>\n",
+       "      <td>North by Northwest</td>\n",
+       "      <td>1959</td>\n",
+       "      <td>Les Tremayne</td>\n",
+       "      <td>actor</td>\n",
+       "      <td>Auctioneer</td>\n",
+       "      <td>12</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>420055</th>\n",
+       "      <td>North by Northwest</td>\n",
+       "      <td>1959</td>\n",
+       "      <td>Philip Coolidge</td>\n",
+       "      <td>actor</td>\n",
+       "      <td>Dr. Cross</td>\n",
+       "      <td>13</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>1366775</th>\n",
+       "      <td>North by Northwest</td>\n",
+       "      <td>1959</td>\n",
+       "      <td>Patrick McVey</td>\n",
+       "      <td>actor</td>\n",
+       "      <td>Sergeant Flamm</td>\n",
+       "      <td>14</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>185128</th>\n",
+       "      <td>North by Northwest</td>\n",
+       "      <td>1959</td>\n",
+       "      <td>Edward Binns</td>\n",
+       "      <td>actor</td>\n",
+       "      <td>Captain Junket</td>\n",
+       "      <td>15</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>1253982</th>\n",
+       "      <td>North by Northwest</td>\n",
+       "      <td>1959</td>\n",
+       "      <td>Ken Lynch</td>\n",
+       "      <td>actor</td>\n",
+       "      <td>Charley - Chicago Policeman</td>\n",
+       "      <td>16</td>\n",
+       "    </tr>\n",
+       "  </tbody>\n",
+       "</table>\n",
+       "</div>"
+      ],
+      "text/plain": [
+       "                      title  year                  name     type  \\\n",
+       "789568   North by Northwest  1959            Cary Grant    actor   \n",
+       "3150433  North by Northwest  1959       Eva Marie Saint  actress   \n",
+       "1319736  North by Northwest  1959           James Mason    actor   \n",
+       "2835733  North by Northwest  1959   Jessie Royce Landis  actress   \n",
+       "322095   North by Northwest  1959        Leo G. Carroll    actor   \n",
+       "2742072  North by Northwest  1959  Josephine Hutchinson  actress   \n",
+       "1536035  North by Northwest  1959           Philip Ober    actor   \n",
+       "1154420  North by Northwest  1959         Martin Landau    actor   \n",
+       "2214182  North by Northwest  1959         Adam Williams    actor   \n",
+       "1640544  North by Northwest  1959          Edward Platt    actor   \n",
+       "602998   North by Northwest  1959     Robert Ellenstein    actor   \n",
+       "2077139  North by Northwest  1959          Les Tremayne    actor   \n",
+       "420055   North by Northwest  1959       Philip Coolidge    actor   \n",
+       "1366775  North by Northwest  1959         Patrick McVey    actor   \n",
+       "185128   North by Northwest  1959          Edward Binns    actor   \n",
+       "1253982  North by Northwest  1959             Ken Lynch    actor   \n",
+       "\n",
+       "                           character   n  \n",
+       "789568            Roger O. Thornhill   1  \n",
+       "3150433                  Eve Kendall   2  \n",
+       "1319736              Phillip Vandamm   3  \n",
+       "2835733              Clara Thornhill   4  \n",
+       "322095                 The Professor   5  \n",
+       "2742072                Mrs. Townsend   6  \n",
+       "1536035              Lester Townsend   7  \n",
+       "1154420                      Leonard   8  \n",
+       "2214182                     Valerian   9  \n",
+       "1640544              Victor Larrabee  10  \n",
+       "602998                         Licht  11  \n",
+       "2077139                   Auctioneer  12  \n",
+       "420055                     Dr. Cross  13  \n",
+       "1366775               Sergeant Flamm  14  \n",
+       "185128                Captain Junket  15  \n",
+       "1253982  Charley - Chicago Policeman  16  "
+      ]
+     },
+     "execution_count": 20,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "c = cast\n",
+    "c = c[c.title == 'North by Northwest']\n",
+    "c = c[c.n.notnull()].sort_values('n')\n",
+    "c"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {
+    "collapsed": true
+   },
+   "source": [
+    "### Display the entire cast, in \"n\"-order, of the 1972 film \"Sleuth\"."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 21,
+   "metadata": {
+    "collapsed": false
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/html": [
+       "<div>\n",
+       "<table border=\"1\" class=\"dataframe\">\n",
+       "  <thead>\n",
+       "    <tr style=\"text-align: right;\">\n",
+       "      <th></th>\n",
+       "      <th>title</th>\n",
+       "      <th>year</th>\n",
+       "      <th>name</th>\n",
+       "      <th>type</th>\n",
+       "      <th>character</th>\n",
+       "      <th>n</th>\n",
+       "    </tr>\n",
+       "  </thead>\n",
+       "  <tbody>\n",
+       "    <tr>\n",
+       "      <th>1545047</th>\n",
+       "      <td>Sleuth</td>\n",
+       "      <td>1972</td>\n",
+       "      <td>Laurence Olivier</td>\n",
+       "      <td>actor</td>\n",
+       "      <td>Andrew Wyke</td>\n",
+       "      <td>1</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>294810</th>\n",
+       "      <td>Sleuth</td>\n",
+       "      <td>1972</td>\n",
+       "      <td>Michael Caine</td>\n",
+       "      <td>actor</td>\n",
+       "      <td>Milo Tindle</td>\n",
+       "      <td>2</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>337756</th>\n",
+       "      <td>Sleuth</td>\n",
+       "      <td>1972</td>\n",
+       "      <td>Alec Cawthorne</td>\n",
+       "      <td>actor</td>\n",
+       "      <td>Inspector Doppler</td>\n",
+       "      <td>3</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>1327177</th>\n",
+       "      <td>Sleuth</td>\n",
+       "      <td>1972</td>\n",
+       "      <td>John (II) Matthews</td>\n",
+       "      <td>actor</td>\n",
+       "      <td>Detective Sergeant Tarrant</td>\n",
+       "      <td>4</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>2458449</th>\n",
+       "      <td>Sleuth</td>\n",
+       "      <td>1972</td>\n",
+       "      <td>Eve (III) Channing</td>\n",
+       "      <td>actress</td>\n",
+       "      <td>Marguerite Wyke</td>\n",
+       "      <td>5</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>1312188</th>\n",
+       "      <td>Sleuth</td>\n",
+       "      <td>1972</td>\n",
+       "      <td>Teddy Martin</td>\n",
+       "      <td>actor</td>\n",
+       "      <td>Police Constable Higgs</td>\n",
+       "      <td>6</td>\n",
+       "    </tr>\n",
+       "  </tbody>\n",
+       "</table>\n",
+       "</div>"
+      ],
+      "text/plain": [
+       "          title  year                name     type  \\\n",
+       "1545047  Sleuth  1972    Laurence Olivier    actor   \n",
+       "294810   Sleuth  1972       Michael Caine    actor   \n",
+       "337756   Sleuth  1972      Alec Cawthorne    actor   \n",
+       "1327177  Sleuth  1972  John (II) Matthews    actor   \n",
+       "2458449  Sleuth  1972  Eve (III) Channing  actress   \n",
+       "1312188  Sleuth  1972        Teddy Martin    actor   \n",
+       "\n",
+       "                          character  n  \n",
+       "1545047                 Andrew Wyke  1  \n",
+       "294810                  Milo Tindle  2  \n",
+       "337756            Inspector Doppler  3  \n",
+       "1327177  Detective Sergeant Tarrant  4  \n",
+       "2458449             Marguerite Wyke  5  \n",
+       "1312188      Police Constable Higgs  6  "
+      ]
+     },
+     "execution_count": 21,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "c = cast\n",
+    "c = c[(c.year == 1972) & (c.title == 'Sleuth')].sort_values('n')\n",
+    "c"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {
+    "collapsed": true
+   },
+   "source": [
+    "### Now display the entire cast, in \"n\"-order, of the 2007 version of \"Sleuth\"."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 22,
+   "metadata": {
+    "collapsed": false
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/html": [
+       "<div>\n",
+       "<table border=\"1\" class=\"dataframe\">\n",
+       "  <thead>\n",
+       "    <tr style=\"text-align: right;\">\n",
+       "      <th></th>\n",
+       "      <th>title</th>\n",
+       "      <th>year</th>\n",
+       "      <th>name</th>\n",
+       "      <th>type</th>\n",
+       "      <th>character</th>\n",
+       "      <th>n</th>\n",
+       "    </tr>\n",
+       "  </thead>\n",
+       "  <tbody>\n",
+       "  </tbody>\n",
+       "</table>\n",
+       "</div>"
+      ],
+      "text/plain": [
+       "Empty DataFrame\n",
+       "Columns: [title, year, name, type, character, n]\n",
+       "Index: []"
+      ]
+     },
+     "execution_count": 22,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "c = cast\n",
+    "c = cast[cast.title == 2007]\n",
+    "c = c[c.title == 'Sleuth'].sort_values('n')\n",
+    "c"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {
+    "collapsed": true
+   },
+   "source": [
+    "### How many roles were credited in the silent 1921 version of Hamlet?"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 23,
+   "metadata": {
+    "collapsed": false
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "9"
+      ]
+     },
+     "execution_count": 23,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "c = cast\n",
+    "len(c[(c.title == 'Hamlet') & (c.year == 1921)])"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {
+    "collapsed": true
+   },
+   "source": [
+    "### How many roles were credited in Branagh’s 1996 Hamlet?"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 24,
+   "metadata": {
+    "collapsed": false
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "54"
+      ]
+     },
+     "execution_count": 24,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "c = cast\n",
+    "len(c[(c.title == 'Hamlet')&(c.year == 1996)])"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {
+    "collapsed": true
+   },
+   "source": [
+    "### How many \"Hamlet\" roles have been listed in all film credits through history?"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 25,
+   "metadata": {
+    "collapsed": false
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "84"
+      ]
+     },
+     "execution_count": 25,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "c = cast\n",
+    "len(c[c.character =='Hamlet'])"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {
+    "collapsed": true
+   },
+   "source": [
+    "### How many people have played an \"Ophelia\"?"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 57,
+   "metadata": {
+    "collapsed": false
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "100"
+      ]
+     },
+     "execution_count": 57,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "c = cast\n",
+    "len(c[c.character == 'Ophelia'])"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {
+    "collapsed": true
+   },
+   "source": [
+    "### How many people have played a role called \"The Dude\"?"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 58,
+   "metadata": {
+    "collapsed": false
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "17"
+      ]
+     },
+     "execution_count": 58,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "c = cast\n",
+    "len(c[c.character == 'The Dude'])"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {
+    "collapsed": true
+   },
+   "source": [
+    "### How many people have played a role called \"The Stranger\"?"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 59,
+   "metadata": {
+    "collapsed": false
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "192"
+      ]
+     },
+     "execution_count": 59,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "c = cast\n",
+    "len(c[c.character == 'The Stranger'])"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {
+    "collapsed": true
+   },
+   "source": [
+    "### How many roles has Sidney Poitier played throughout his career?"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 63,
+   "metadata": {
+    "collapsed": false
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "43"
+      ]
+     },
+     "execution_count": 63,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "c = cast\n",
+    "len(c[c.name == 'Sidney Poitier'])"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {
+    "collapsed": true
+   },
+   "source": [
+    "### How many roles has Judi Dench played?"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 64,
+   "metadata": {
+    "collapsed": false
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "53"
+      ]
+     },
+     "execution_count": 64,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "c = cast\n",
+    "len(c[c.name == 'Judi Dench'])"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {
+    "collapsed": true
+   },
+   "source": [
+    "### List the supporting roles (having n=2) played by Cary Grant in the 1940s, in order by year."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 66,
+   "metadata": {
+    "collapsed": false
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/html": [
+       "<div>\n",
+       "<table border=\"1\" class=\"dataframe\">\n",
+       "  <thead>\n",
+       "    <tr style=\"text-align: right;\">\n",
+       "      <th></th>\n",
+       "      <th>title</th>\n",
+       "      <th>year</th>\n",
+       "      <th>name</th>\n",
+       "      <th>type</th>\n",
+       "      <th>character</th>\n",
+       "      <th>n</th>\n",
+       "    </tr>\n",
+       "  </thead>\n",
+       "  <tbody>\n",
+       "    <tr>\n",
+       "      <th>789565</th>\n",
+       "      <td>My Favorite Wife</td>\n",
+       "      <td>1940</td>\n",
+       "      <td>Cary Grant</td>\n",
+       "      <td>actor</td>\n",
+       "      <td>Nick</td>\n",
+       "      <td>2</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>789575</th>\n",
+       "      <td>Penny Serenade</td>\n",
+       "      <td>1941</td>\n",
+       "      <td>Cary Grant</td>\n",
+       "      <td>actor</td>\n",
+       "      <td>Roger Adams</td>\n",
+       "      <td>2</td>\n",
+       "    </tr>\n",
+       "  </tbody>\n",
+       "</table>\n",
+       "</div>"
+      ],
+      "text/plain": [
+       "                   title  year        name   type    character  n\n",
+       "789565  My Favorite Wife  1940  Cary Grant  actor         Nick  2\n",
+       "789575    Penny Serenade  1941  Cary Grant  actor  Roger Adams  2"
+      ]
+     },
+     "execution_count": 66,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "c = cast\n",
+    "c[(c.n == 2) & (c.name == 'Cary Grant') &(c.year//10*10 == 1940)].sort_values('year')"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {
+    "collapsed": true
+   },
+   "source": [
+    "### List the leading roles that Cary Grant played in the 1940s in order by year."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 67,
+   "metadata": {
+    "collapsed": false
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/html": [
+       "<div>\n",
+       "<table border=\"1\" class=\"dataframe\">\n",
+       "  <thead>\n",
+       "    <tr style=\"text-align: right;\">\n",
+       "      <th></th>\n",
+       "      <th>title</th>\n",
+       "      <th>year</th>\n",
+       "      <th>name</th>\n",
+       "      <th>type</th>\n",
+       "      <th>character</th>\n",
+       "      <th>n</th>\n",
+       "    </tr>\n",
+       "  </thead>\n",
+       "  <tbody>\n",
+       "    <tr>\n",
+       "      <th>789590</th>\n",
+       "      <td>The Howards of Virginia</td>\n",
+       "      <td>1940</td>\n",
+       "      <td>Cary Grant</td>\n",
+       "      <td>actor</td>\n",
+       "      <td>Matt Howard</td>\n",
+       "      <td>1</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>789547</th>\n",
+       "      <td>His Girl Friday</td>\n",
+       "      <td>1940</td>\n",
+       "      <td>Cary Grant</td>\n",
+       "      <td>actor</td>\n",
+       "      <td>Walter Burns</td>\n",
+       "      <td>1</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>789592</th>\n",
+       "      <td>The Philadelphia Story</td>\n",
+       "      <td>1940</td>\n",
+       "      <td>Cary Grant</td>\n",
+       "      <td>actor</td>\n",
+       "      <td>C. K. Dexter Haven</td>\n",
+       "      <td>1</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>789580</th>\n",
+       "      <td>Suspicion</td>\n",
+       "      <td>1941</td>\n",
+       "      <td>Cary Grant</td>\n",
+       "      <td>actor</td>\n",
+       "      <td>Johnnie</td>\n",
+       "      <td>1</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>789594</th>\n",
+       "      <td>The Talk of the Town</td>\n",
+       "      <td>1942</td>\n",
+       "      <td>Cary Grant</td>\n",
+       "      <td>actor</td>\n",
+       "      <td>Leopold Dilg</td>\n",
+       "      <td>1</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>789571</th>\n",
+       "      <td>Once Upon a Honeymoon</td>\n",
+       "      <td>1942</td>\n",
+       "      <td>Cary Grant</td>\n",
+       "      <td>actor</td>\n",
+       "      <td>Patrick 'Pat' O'Toole</td>\n",
+       "      <td>1</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>789538</th>\n",
+       "      <td>Destination Tokyo</td>\n",
+       "      <td>1943</td>\n",
+       "      <td>Cary Grant</td>\n",
+       "      <td>actor</td>\n",
+       "      <td>Capt. Cassidy</td>\n",
+       "      <td>1</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>789563</th>\n",
+       "      <td>Mr. Lucky</td>\n",
+       "      <td>1943</td>\n",
+       "      <td>Cary Grant</td>\n",
+       "      <td>actor</td>\n",
+       "      <td>Joe Adams</td>\n",
+       "      <td>1</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>789564</th>\n",
+       "      <td>Mr. Lucky</td>\n",
+       "      <td>1943</td>\n",
+       "      <td>Cary Grant</td>\n",
+       "      <td>actor</td>\n",
+       "      <td>Joe Bascopolous</td>\n",
+       "      <td>1</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>789572</th>\n",
+       "      <td>Once Upon a Time</td>\n",
+       "      <td>1944</td>\n",
+       "      <td>Cary Grant</td>\n",
+       "      <td>actor</td>\n",
+       "      <td>Jerry Flynn</td>\n",
+       "      <td>1</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>789530</th>\n",
+       "      <td>Arsenic and Old Lace</td>\n",
+       "      <td>1944</td>\n",
+       "      <td>Cary Grant</td>\n",
+       "      <td>actor</td>\n",
+       "      <td>Mortimer Brewster</td>\n",
+       "      <td>1</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>789567</th>\n",
+       "      <td>None But the Lonely Heart</td>\n",
+       "      <td>1944</td>\n",
+       "      <td>Cary Grant</td>\n",
+       "      <td>actor</td>\n",
+       "      <td>Ernie Mott</td>\n",
+       "      <td>1</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>789566</th>\n",
+       "      <td>Night and Day</td>\n",
+       "      <td>1946</td>\n",
+       "      <td>Cary Grant</td>\n",
+       "      <td>actor</td>\n",
+       "      <td>Cole Porter</td>\n",
+       "      <td>1</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>789569</th>\n",
+       "      <td>Notorious</td>\n",
+       "      <td>1946</td>\n",
+       "      <td>Cary Grant</td>\n",
+       "      <td>actor</td>\n",
+       "      <td>Devlin</td>\n",
+       "      <td>1</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>789586</th>\n",
+       "      <td>The Bachelor and the Bobby-Soxer</td>\n",
+       "      <td>1947</td>\n",
+       "      <td>Cary Grant</td>\n",
+       "      <td>actor</td>\n",
+       "      <td>Dick Nugent</td>\n",
+       "      <td>1</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>789587</th>\n",
+       "      <td>The Bishop's Wife</td>\n",
+       "      <td>1947</td>\n",
+       "      <td>Cary Grant</td>\n",
+       "      <td>actor</td>\n",
+       "      <td>Dudley</td>\n",
+       "      <td>1</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>789562</th>\n",
+       "      <td>Mr. Blandings Builds His Dream House</td>\n",
+       "      <td>1948</td>\n",
+       "      <td>Cary Grant</td>\n",
+       "      <td>actor</td>\n",
+       "      <td>Jim Blandings</td>\n",
+       "      <td>1</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>789542</th>\n",
+       "      <td>Every Girl Should Be Married</td>\n",
+       "      <td>1948</td>\n",
+       "      <td>Cary Grant</td>\n",
+       "      <td>actor</td>\n",
+       "      <td>Dr. Madison Brown</td>\n",
+       "      <td>1</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>789551</th>\n",
+       "      <td>I Was a Male War Bride</td>\n",
+       "      <td>1949</td>\n",
+       "      <td>Cary Grant</td>\n",
+       "      <td>actor</td>\n",
+       "      <td>Capt. Henri Rochard</td>\n",
+       "      <td>1</td>\n",
+       "    </tr>\n",
+       "  </tbody>\n",
+       "</table>\n",
+       "</div>"
+      ],
+      "text/plain": [
+       "                                       title  year        name   type  \\\n",
+       "789590               The Howards of Virginia  1940  Cary Grant  actor   \n",
+       "789547                       His Girl Friday  1940  Cary Grant  actor   \n",
+       "789592                The Philadelphia Story  1940  Cary Grant  actor   \n",
+       "789580                             Suspicion  1941  Cary Grant  actor   \n",
+       "789594                  The Talk of the Town  1942  Cary Grant  actor   \n",
+       "789571                 Once Upon a Honeymoon  1942  Cary Grant  actor   \n",
+       "789538                     Destination Tokyo  1943  Cary Grant  actor   \n",
+       "789563                             Mr. Lucky  1943  Cary Grant  actor   \n",
+       "789564                             Mr. Lucky  1943  Cary Grant  actor   \n",
+       "789572                      Once Upon a Time  1944  Cary Grant  actor   \n",
+       "789530                  Arsenic and Old Lace  1944  Cary Grant  actor   \n",
+       "789567             None But the Lonely Heart  1944  Cary Grant  actor   \n",
+       "789566                         Night and Day  1946  Cary Grant  actor   \n",
+       "789569                             Notorious  1946  Cary Grant  actor   \n",
+       "789586      The Bachelor and the Bobby-Soxer  1947  Cary Grant  actor   \n",
+       "789587                     The Bishop's Wife  1947  Cary Grant  actor   \n",
+       "789562  Mr. Blandings Builds His Dream House  1948  Cary Grant  actor   \n",
+       "789542          Every Girl Should Be Married  1948  Cary Grant  actor   \n",
+       "789551                I Was a Male War Bride  1949  Cary Grant  actor   \n",
+       "\n",
+       "                    character  n  \n",
+       "789590            Matt Howard  1  \n",
+       "789547           Walter Burns  1  \n",
+       "789592     C. K. Dexter Haven  1  \n",
+       "789580                Johnnie  1  \n",
+       "789594           Leopold Dilg  1  \n",
+       "789571  Patrick 'Pat' O'Toole  1  \n",
+       "789538          Capt. Cassidy  1  \n",
+       "789563              Joe Adams  1  \n",
+       "789564        Joe Bascopolous  1  \n",
+       "789572            Jerry Flynn  1  \n",
+       "789530      Mortimer Brewster  1  \n",
+       "789567             Ernie Mott  1  \n",
+       "789566            Cole Porter  1  \n",
+       "789569                 Devlin  1  \n",
+       "789586            Dick Nugent  1  \n",
+       "789587                 Dudley  1  \n",
+       "789562          Jim Blandings  1  \n",
+       "789542      Dr. Madison Brown  1  \n",
+       "789551    Capt. Henri Rochard  1  "
+      ]
+     },
+     "execution_count": 67,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "c = cast\n",
+    "c[(c.n == 1) & (c.name == 'Cary Grant') &(c.year//10*10 == 1940)].sort_values('year')"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {
+    "collapsed": true
+   },
+   "source": [
+    "### How many roles were available for actors in the 1950s?"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 70,
+   "metadata": {
+    "collapsed": false
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "150803"
+      ]
+     },
+     "execution_count": 70,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "c = cast\n",
+    "len(c[(c.type == 'actor') & (c.year//10*10== 1950)])"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {
+    "collapsed": true
+   },
+   "source": [
+    "### How many roles were avilable for actresses in the 1950s?"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 71,
+   "metadata": {
+    "collapsed": false
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "54838"
+      ]
+     },
+     "execution_count": 71,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "c =  cast\n",
+    "len(c[(c.type =='actress') & (c.year//10*10 == 1950)])"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {
+    "collapsed": true
+   },
+   "source": [
+    "### How many leading roles (n=1) were available from the beginning of film history through 1980?"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 72,
+   "metadata": {
+    "collapsed": false
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "62245"
+      ]
+     },
+     "execution_count": 72,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "c = cast\n",
+    "len(c[(c.n == 1) & (c.year<=1980)])\n"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {
+    "collapsed": true
+   },
+   "source": [
+    "### How many non-leading roles were available through from the beginning of film history through 1980?"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 73,
+   "metadata": {
+    "collapsed": false
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "1065822"
+      ]
+     },
+     "execution_count": 73,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "c = cast\n",
+    "len(c[(c.n != 1) & (c.year<=1980)])\n"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {
+    "collapsed": true
+   },
+   "source": [
+    "### How many roles through 1980 were minor enough that they did not warrant a numeric \"n\" rank?"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 74,
+   "metadata": {
+    "collapsed": false
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "424732"
+      ]
+     },
+     "execution_count": 74,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "c = cast\n",
+    "len(c[(c.n.isnull()) & (c.year<=1980)])\n"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 26,
+   "metadata": {
+    "collapsed": false
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/html": [
+       "<div>\n",
+       "<table border=\"1\" class=\"dataframe\">\n",
+       "  <thead>\n",
+       "    <tr style=\"text-align: right;\">\n",
+       "      <th></th>\n",
+       "      <th>title</th>\n",
+       "      <th>year</th>\n",
+       "    </tr>\n",
+       "  </thead>\n",
+       "  <tbody>\n",
+       "    <tr>\n",
+       "      <th>0</th>\n",
+       "      <td>Torab al-ghoraba</td>\n",
+       "      <td>1998</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>1</th>\n",
+       "      <td>Long zai tian ya</td>\n",
+       "      <td>1989</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>2</th>\n",
+       "      <td>Jewtopia</td>\n",
+       "      <td>2012</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>3</th>\n",
+       "      <td>Baby Face</td>\n",
+       "      <td>1959</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>4</th>\n",
+       "      <td>The Lucky Break</td>\n",
+       "      <td>2014</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>5</th>\n",
+       "      <td>La perla</td>\n",
+       "      <td>1947</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>6</th>\n",
+       "      <td>Nelson-Wolgast Fight</td>\n",
+       "      <td>1910</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>7</th>\n",
+       "      <td>Patsy</td>\n",
+       "      <td>1917</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>8</th>\n",
+       "      <td>Saranghae malsoonssi</td>\n",
+       "      <td>2005</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>9</th>\n",
+       "      <td>The Book of Life</td>\n",
+       "      <td>1998</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>10</th>\n",
+       "      <td>Underground</td>\n",
+       "      <td>2007</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>11</th>\n",
+       "      <td>Marija's Own</td>\n",
+       "      <td>2011</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>12</th>\n",
+       "      <td>Euro Kings</td>\n",
+       "      <td>2016</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>13</th>\n",
+       "      <td>Death Ship</td>\n",
+       "      <td>1980</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>14</th>\n",
+       "      <td>Ren ba zhao</td>\n",
+       "      <td>1977</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>15</th>\n",
+       "      <td>Juegos de alcoba</td>\n",
+       "      <td>1971</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>16</th>\n",
+       "      <td>Gunnar Hedes saga</td>\n",
+       "      <td>1923</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>17</th>\n",
+       "      <td>Un giglio infranto</td>\n",
+       "      <td>1956</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>18</th>\n",
+       "      <td>Missing Pieces</td>\n",
+       "      <td>2016</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>19</th>\n",
+       "      <td>Cudzoziemka</td>\n",
+       "      <td>1986</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>20</th>\n",
+       "      <td>Muerte infernal</td>\n",
+       "      <td>1992</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>21</th>\n",
+       "      <td>1-2-3-4 ou Les collants noirs</td>\n",
+       "      <td>1961</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>22</th>\n",
+       "      <td>Shoreditch</td>\n",
+       "      <td>2003</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>23</th>\n",
+       "      <td>La plage noire</td>\n",
+       "      <td>2001</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>24</th>\n",
+       "      <td>Cheap Champagne</td>\n",
+       "      <td>2010</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>25</th>\n",
+       "      <td>Aman kimse duymasin</td>\n",
+       "      <td>1963</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>26</th>\n",
+       "      <td>The Skinny</td>\n",
+       "      <td>2012</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>27</th>\n",
+       "      <td>Long Shot</td>\n",
+       "      <td>2002</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>28</th>\n",
+       "      <td>Gator</td>\n",
+       "      <td>1976</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>29</th>\n",
+       "      <td>Wo xin shen chu</td>\n",
+       "      <td>1976</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>...</th>\n",
+       "      <td>...</td>\n",
+       "      <td>...</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>216507</th>\n",
+       "      <td>I Hate Toronto: A Love Story</td>\n",
+       "      <td>2012</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>216508</th>\n",
+       "      <td>Intonga</td>\n",
+       "      <td>2009</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>216509</th>\n",
+       "      <td>Morning Glory</td>\n",
+       "      <td>1993</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>216510</th>\n",
+       "      <td>Dhuaan</td>\n",
+       "      <td>2013</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>216511</th>\n",
+       "      <td>The Adventures of Tom Sawyer</td>\n",
+       "      <td>1986</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>216512</th>\n",
+       "      <td>Malice in Wonderland</td>\n",
+       "      <td>2009</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>216513</th>\n",
+       "      <td>Det perfekte kup</td>\n",
+       "      <td>2008</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>216514</th>\n",
+       "      <td>2:13</td>\n",
+       "      <td>2009</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>216515</th>\n",
+       "      <td>Hills of Missing Men</td>\n",
+       "      <td>1922</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>216516</th>\n",
+       "      <td>Sudhandhiram</td>\n",
+       "      <td>2000</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>216517</th>\n",
+       "      <td>Eve's Leaves</td>\n",
+       "      <td>1926</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>216518</th>\n",
+       "      <td>The Divorce</td>\n",
+       "      <td>2014</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>216519</th>\n",
+       "      <td>Don't Call Us, We'll Call You</td>\n",
+       "      <td>1971</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>216520</th>\n",
+       "      <td>ThanksKilling 3</td>\n",
+       "      <td>2012</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>216521</th>\n",
+       "      <td>Katil kim</td>\n",
+       "      <td>1971</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>216522</th>\n",
+       "      <td>Without Children</td>\n",
+       "      <td>1935</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>216523</th>\n",
+       "      <td>Lo imposible</td>\n",
+       "      <td>2012</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>216524</th>\n",
+       "      <td>Come to the Stable</td>\n",
+       "      <td>1949</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>216525</th>\n",
+       "      <td>Run for Your Life</td>\n",
+       "      <td>2015</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>216526</th>\n",
+       "      <td>Xue ji huang sha zhen</td>\n",
+       "      <td>1993</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>216527</th>\n",
+       "      <td>Brother's Keeper</td>\n",
+       "      <td>2002</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>216528</th>\n",
+       "      <td>Accused of Murder</td>\n",
+       "      <td>1956</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>216529</th>\n",
+       "      <td>L'amant</td>\n",
+       "      <td>2004</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>216530</th>\n",
+       "      <td>Wong Fei Hung II: Nam yee tung chi keung</td>\n",
+       "      <td>1992</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>216531</th>\n",
+       "      <td>Bapu Viru Vategavkar</td>\n",
+       "      <td>2009</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>216532</th>\n",
+       "      <td>Paradise</td>\n",
+       "      <td>2004</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>216533</th>\n",
+       "      <td>Azmat Sakan</td>\n",
+       "      <td>1972</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>216534</th>\n",
+       "      <td>Grow Up, Tony Phillips</td>\n",
+       "      <td>2013</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>216535</th>\n",
+       "      <td>Emmanuelle: L'antivierge</td>\n",
+       "      <td>1975</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>216536</th>\n",
+       "      <td>Biberspur</td>\n",
+       "      <td>1984</td>\n",
+       "    </tr>\n",
+       "  </tbody>\n",
+       "</table>\n",
+       "<p>216537 rows × 2 columns</p>\n",
+       "</div>"
+      ],
+      "text/plain": [
+       "                                           title  year\n",
+       "0                               Torab al-ghoraba  1998\n",
+       "1                               Long zai tian ya  1989\n",
+       "2                                       Jewtopia  2012\n",
+       "3                                      Baby Face  1959\n",
+       "4                                The Lucky Break  2014\n",
+       "5                                       La perla  1947\n",
+       "6                           Nelson-Wolgast Fight  1910\n",
+       "7                                          Patsy  1917\n",
+       "8                           Saranghae malsoonssi  2005\n",
+       "9                               The Book of Life  1998\n",
+       "10                                   Underground  2007\n",
+       "11                                  Marija's Own  2011\n",
+       "12                                    Euro Kings  2016\n",
+       "13                                    Death Ship  1980\n",
+       "14                                   Ren ba zhao  1977\n",
+       "15                              Juegos de alcoba  1971\n",
+       "16                             Gunnar Hedes saga  1923\n",
+       "17                            Un giglio infranto  1956\n",
+       "18                                Missing Pieces  2016\n",
+       "19                                   Cudzoziemka  1986\n",
+       "20                               Muerte infernal  1992\n",
+       "21                 1-2-3-4 ou Les collants noirs  1961\n",
+       "22                                    Shoreditch  2003\n",
+       "23                                La plage noire  2001\n",
+       "24                               Cheap Champagne  2010\n",
+       "25                           Aman kimse duymasin  1963\n",
+       "26                                    The Skinny  2012\n",
+       "27                                     Long Shot  2002\n",
+       "28                                         Gator  1976\n",
+       "29                               Wo xin shen chu  1976\n",
+       "...                                          ...   ...\n",
+       "216507              I Hate Toronto: A Love Story  2012\n",
+       "216508                                   Intonga  2009\n",
+       "216509                             Morning Glory  1993\n",
+       "216510                                    Dhuaan  2013\n",
+       "216511              The Adventures of Tom Sawyer  1986\n",
+       "216512                      Malice in Wonderland  2009\n",
+       "216513                          Det perfekte kup  2008\n",
+       "216514                                      2:13  2009\n",
+       "216515                      Hills of Missing Men  1922\n",
+       "216516                              Sudhandhiram  2000\n",
+       "216517                              Eve's Leaves  1926\n",
+       "216518                               The Divorce  2014\n",
+       "216519             Don't Call Us, We'll Call You  1971\n",
+       "216520                           ThanksKilling 3  2012\n",
+       "216521                                 Katil kim  1971\n",
+       "216522                          Without Children  1935\n",
+       "216523                              Lo imposible  2012\n",
+       "216524                        Come to the Stable  1949\n",
+       "216525                         Run for Your Life  2015\n",
+       "216526                     Xue ji huang sha zhen  1993\n",
+       "216527                          Brother's Keeper  2002\n",
+       "216528                         Accused of Murder  1956\n",
+       "216529                                   L'amant  2004\n",
+       "216530  Wong Fei Hung II: Nam yee tung chi keung  1992\n",
+       "216531                      Bapu Viru Vategavkar  2009\n",
+       "216532                                  Paradise  2004\n",
+       "216533                               Azmat Sakan  1972\n",
+       "216534                    Grow Up, Tony Phillips  2013\n",
+       "216535                  Emmanuelle: L'antivierge  1975\n",
+       "216536                                 Biberspur  1984\n",
+       "\n",
+       "[216537 rows x 2 columns]"
+      ]
+     },
+     "execution_count": 26,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "titles"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 27,
+   "metadata": {
+    "collapsed": false
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "216537"
+      ]
+     },
+     "execution_count": 27,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "len(titles)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 28,
+   "metadata": {
+    "collapsed": false
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/html": [
+       "<div>\n",
+       "<table border=\"1\" class=\"dataframe\">\n",
+       "  <thead>\n",
+       "    <tr style=\"text-align: right;\">\n",
+       "      <th></th>\n",
+       "      <th>title</th>\n",
+       "      <th>year</th>\n",
+       "    </tr>\n",
+       "  </thead>\n",
+       "  <tbody>\n",
+       "    <tr>\n",
+       "      <th>0</th>\n",
+       "      <td>Torab al-ghoraba</td>\n",
+       "      <td>1998</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>1</th>\n",
+       "      <td>Long zai tian ya</td>\n",
+       "      <td>1989</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>2</th>\n",
+       "      <td>Jewtopia</td>\n",
+       "      <td>2012</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>3</th>\n",
+       "      <td>Baby Face</td>\n",
+       "      <td>1959</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>4</th>\n",
+       "      <td>The Lucky Break</td>\n",
+       "      <td>2014</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>5</th>\n",
+       "      <td>La perla</td>\n",
+       "      <td>1947</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>6</th>\n",
+       "      <td>Nelson-Wolgast Fight</td>\n",
+       "      <td>1910</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>7</th>\n",
+       "      <td>Patsy</td>\n",
+       "      <td>1917</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>8</th>\n",
+       "      <td>Saranghae malsoonssi</td>\n",
+       "      <td>2005</td>\n",
+       "    </tr>\n",
+       "  </tbody>\n",
+       "</table>\n",
+       "</div>"
+      ],
+      "text/plain": [
+       "                  title  year\n",
+       "0      Torab al-ghoraba  1998\n",
+       "1      Long zai tian ya  1989\n",
+       "2              Jewtopia  2012\n",
+       "3             Baby Face  1959\n",
+       "4       The Lucky Break  2014\n",
+       "5              La perla  1947\n",
+       "6  Nelson-Wolgast Fight  1910\n",
+       "7                 Patsy  1917\n",
+       "8  Saranghae malsoonssi  2005"
+      ]
+     },
+     "execution_count": 28,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "h = titles.head(9)\n",
+    "# operations\n",
+    "h"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 29,
+   "metadata": {
+    "collapsed": false
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/html": [
+       "<div>\n",
+       "<table border=\"1\" class=\"dataframe\">\n",
+       "  <thead>\n",
+       "    <tr style=\"text-align: right;\">\n",
+       "      <th></th>\n",
+       "      <th>title</th>\n",
+       "      <th>year</th>\n",
+       "    </tr>\n",
+       "  </thead>\n",
+       "  <tbody>\n",
+       "    <tr>\n",
+       "      <th>0</th>\n",
+       "      <td>Torab al-ghoraba</td>\n",
+       "      <td>1998</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>1</th>\n",
+       "      <td>Long zai tian ya</td>\n",
+       "      <td>1989</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>2</th>\n",
+       "      <td>Jewtopia</td>\n",
+       "      <td>2012</td>\n",
+       "    </tr>\n",
+       "  </tbody>\n",
+       "</table>\n",
+       "</div>"
+      ],
+      "text/plain": [
+       "              title  year\n",
+       "0  Torab al-ghoraba  1998\n",
+       "1  Long zai tian ya  1989\n",
+       "2          Jewtopia  2012"
+      ]
+     },
+     "execution_count": 29,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "h.head(3)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 30,
+   "metadata": {
+    "collapsed": false
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "0    1990\n",
+       "1    1980\n",
+       "2    2010\n",
+       "3    1950\n",
+       "4    2010\n",
+       "5    1940\n",
+       "6    1910\n",
+       "7    1910\n",
+       "8    2000\n",
+       "Name: year, dtype: int64"
+      ]
+     },
+     "execution_count": 30,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "h['year'] //10*10"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 31,
+   "metadata": {
+    "collapsed": false
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "0     True\n",
+       "1     True\n",
+       "2     True\n",
+       "3    False\n",
+       "4     True\n",
+       "5    False\n",
+       "6    False\n",
+       "7    False\n",
+       "8     True\n",
+       "Name: year, dtype: bool"
+      ]
+     },
+     "execution_count": 31,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "h.year > 1985"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 32,
+   "metadata": {
+    "collapsed": false
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/html": [
+       "<div>\n",
+       "<table border=\"1\" class=\"dataframe\">\n",
+       "  <thead>\n",
+       "    <tr style=\"text-align: right;\">\n",
+       "      <th></th>\n",
+       "      <th>title</th>\n",
+       "      <th>year</th>\n",
+       "    </tr>\n",
+       "  </thead>\n",
+       "  <tbody>\n",
+       "    <tr>\n",
+       "      <th>0</th>\n",
+       "      <td>Torab al-ghoraba</td>\n",
+       "      <td>1998</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>2</th>\n",
+       "      <td>Jewtopia</td>\n",
+       "      <td>2012</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>3</th>\n",
+       "      <td>Baby Face</td>\n",
+       "      <td>1959</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>4</th>\n",
+       "      <td>The Lucky Break</td>\n",
+       "      <td>2014</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>5</th>\n",
+       "      <td>La perla</td>\n",
+       "      <td>1947</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>6</th>\n",
+       "      <td>Nelson-Wolgast Fight</td>\n",
+       "      <td>1910</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>7</th>\n",
+       "      <td>Patsy</td>\n",
+       "      <td>1917</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>8</th>\n",
+       "      <td>Saranghae malsoonssi</td>\n",
+       "      <td>2005</td>\n",
+       "    </tr>\n",
+       "  </tbody>\n",
+       "</table>\n",
+       "</div>"
+      ],
+      "text/plain": [
+       "                  title  year\n",
+       "0      Torab al-ghoraba  1998\n",
+       "2              Jewtopia  2012\n",
+       "3             Baby Face  1959\n",
+       "4       The Lucky Break  2014\n",
+       "5              La perla  1947\n",
+       "6  Nelson-Wolgast Fight  1910\n",
+       "7                 Patsy  1917\n",
+       "8  Saranghae malsoonssi  2005"
+      ]
+     },
+     "execution_count": 32,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "h[(h.year < 1980) | (h.year >= 1990)]   \n",
+    "#\" or: /\""
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 33,
+   "metadata": {
+    "collapsed": false
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/html": [
+       "<div>\n",
+       "<table border=\"1\" class=\"dataframe\">\n",
+       "  <thead>\n",
+       "    <tr style=\"text-align: right;\">\n",
+       "      <th></th>\n",
+       "      <th>title</th>\n",
+       "      <th>year</th>\n",
+       "    </tr>\n",
+       "  </thead>\n",
+       "  <tbody>\n",
+       "    <tr>\n",
+       "      <th>61785</th>\n",
+       "      <td>Macbeth</td>\n",
+       "      <td>2013</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>154685</th>\n",
+       "      <td>Macbeth</td>\n",
+       "      <td>2014</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>43656</th>\n",
+       "      <td>Macbeth</td>\n",
+       "      <td>2015</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>198858</th>\n",
+       "      <td>Macbeth</td>\n",
+       "      <td>2016</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>128239</th>\n",
+       "      <td>Macbeth</td>\n",
+       "      <td>2017</td>\n",
+       "    </tr>\n",
+       "  </tbody>\n",
+       "</table>\n",
+       "</div>"
+      ],
+      "text/plain": [
+       "          title  year\n",
+       "61785   Macbeth  2013\n",
+       "154685  Macbeth  2014\n",
+       "43656   Macbeth  2015\n",
+       "198858  Macbeth  2016\n",
+       "128239  Macbeth  2017"
+      ]
+     },
+     "execution_count": 33,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "t = titles\n",
+    "t[t.title == 'Macbeth'].sort_values('year').tail()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 34,
+   "metadata": {
+    "collapsed": false
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "48057     1894\n",
+       "153623    1899\n",
+       "204919    1900\n",
+       "89778     1900\n",
+       "247       1900\n",
+       "144124    1900\n",
+       "159831    1903\n",
+       "198400    1905\n",
+       "61041     1905\n",
+       "198026    1906\n",
+       "202531    1906\n",
+       "77316     1906\n",
+       "190559    1906\n",
+       "2124      1906\n",
+       "94072     1907\n",
+       "185545    1907\n",
+       "4114      1907\n",
+       "201306    1907\n",
+       "53180     1908\n",
+       "210113    1908\n",
+       "14659     1908\n",
+       "2326      1908\n",
+       "191906    1908\n",
+       "36135     1908\n",
+       "96859     1909\n",
+       "167850    1909\n",
+       "162508    1909\n",
+       "40234     1909\n",
+       "94941     1909\n",
+       "41262     1909\n",
+       "          ... \n",
+       "65548     2020\n",
+       "28981     2020\n",
+       "207025    2020\n",
+       "89        2020\n",
+       "71445     2020\n",
+       "80547     2020\n",
+       "7879      2020\n",
+       "96083     2021\n",
+       "18387     2021\n",
+       "189045    2021\n",
+       "127564    2021\n",
+       "1279      2021\n",
+       "11466     2021\n",
+       "21190     2021\n",
+       "18063     2021\n",
+       "74864     2021\n",
+       "180296    2021\n",
+       "138510    2022\n",
+       "104272    2022\n",
+       "14066     2022\n",
+       "185569    2022\n",
+       "64833     2022\n",
+       "132539    2022\n",
+       "59157     2022\n",
+       "196554    2022\n",
+       "115792    2023\n",
+       "189423    2023\n",
+       "110454    2023\n",
+       "19186     2024\n",
+       "211699    2024\n",
+       "Name: year, dtype: int64"
+      ]
+     },
+     "execution_count": 34,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "t.year.sort_values()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 35,
+   "metadata": {
+    "collapsed": false
+   },
+   "outputs": [
+    {
+     "name": "stderr",
+     "output_type": "stream",
+     "text": [
+      "C:\\Users\\Ruiye\\Anaconda3\\lib\\site-packages\\ipykernel\\__main__.py:3: FutureWarning: sort(columns=....) is deprecated, use sort_values(by=.....)\n",
+      "  app.launch_new_instance()\n"
+     ]
+    },
+    {
+     "data": {
+      "text/html": [
+       "<div>\n",
+       "<table border=\"1\" class=\"dataframe\">\n",
+       "  <thead>\n",
+       "    <tr style=\"text-align: right;\">\n",
+       "      <th></th>\n",
+       "      <th>title</th>\n",
+       "      <th>year</th>\n",
+       "      <th>name</th>\n",
+       "      <th>type</th>\n",
+       "      <th>character</th>\n",
+       "      <th>n</th>\n",
+       "    </tr>\n",
+       "  </thead>\n",
+       "  <tbody>\n",
+       "    <tr>\n",
+       "      <th>2</th>\n",
+       "      <td>Menace II Society</td>\n",
+       "      <td>1993</td>\n",
+       "      <td>Too $hort</td>\n",
+       "      <td>actor</td>\n",
+       "      <td>Lew-Loc</td>\n",
+       "      <td>27</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>3</th>\n",
+       "      <td>Porndogs: The Adventures of Sadie</td>\n",
+       "      <td>2009</td>\n",
+       "      <td>Too $hort</td>\n",
+       "      <td>actor</td>\n",
+       "      <td>Bosco</td>\n",
+       "      <td>3</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>0</th>\n",
+       "      <td>Suuri illusioni</td>\n",
+       "      <td>1985</td>\n",
+       "      <td>Homo $</td>\n",
+       "      <td>actor</td>\n",
+       "      <td>Guests</td>\n",
+       "      <td>22</td>\n",
+       "    </tr>\n",
+       "  </tbody>\n",
+       "</table>\n",
+       "</div>"
+      ],
+      "text/plain": [
+       "                               title  year       name   type character   n\n",
+       "2                  Menace II Society  1993  Too $hort  actor   Lew-Loc  27\n",
+       "3  Porndogs: The Adventures of Sadie  2009  Too $hort  actor     Bosco   3\n",
+       "0                    Suuri illusioni  1985     Homo $  actor    Guests  22"
+      ]
+     },
+     "execution_count": 35,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "h = cast.head()\n",
+    "hnew = h[h.n.notnull()]\n",
+    "hnew.sort(['title','year'])"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 36,
+   "metadata": {
+    "collapsed": false
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "True"
+      ]
+     },
+     "execution_count": 36,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "'Hamlet(II)'.startswith('Hamlet')"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 37,
+   "metadata": {
+    "collapsed": false
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "0    False\n",
+       "1    False\n",
+       "2    False\n",
+       "3    False\n",
+       "4    False\n",
+       "Name: title, dtype: bool"
+      ]
+     },
+     "execution_count": 37,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "h.title.str.startswith('The')"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 38,
+   "metadata": {
+    "collapsed": false
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/html": [
+       "<div>\n",
+       "<table border=\"1\" class=\"dataframe\">\n",
+       "  <thead>\n",
+       "    <tr style=\"text-align: right;\">\n",
+       "      <th></th>\n",
+       "      <th>title</th>\n",
+       "      <th>year</th>\n",
+       "    </tr>\n",
+       "  </thead>\n",
+       "  <tbody>\n",
+       "    <tr>\n",
+       "      <th>20108</th>\n",
+       "      <td>Hamlet</td>\n",
+       "      <td>1911</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>23054</th>\n",
+       "      <td>Hamlet</td>\n",
+       "      <td>2016</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>53594</th>\n",
+       "      <td>Hamlet</td>\n",
+       "      <td>1987</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>65937</th>\n",
+       "      <td>Hamlet</td>\n",
+       "      <td>1973</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>74147</th>\n",
+       "      <td>Hamlet</td>\n",
+       "      <td>2015</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>80092</th>\n",
+       "      <td>Hamlet</td>\n",
+       "      <td>1969</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>92525</th>\n",
+       "      <td>Hamlet</td>\n",
+       "      <td>1990</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>95160</th>\n",
+       "      <td>Hamlet</td>\n",
+       "      <td>2014</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>100882</th>\n",
+       "      <td>Hamlet</td>\n",
+       "      <td>1948</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>103427</th>\n",
+       "      <td>Hamlet</td>\n",
+       "      <td>2000</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>123489</th>\n",
+       "      <td>Hamlet</td>\n",
+       "      <td>1954</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>135546</th>\n",
+       "      <td>Hamlet</td>\n",
+       "      <td>1910</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>153616</th>\n",
+       "      <td>Hamlet</td>\n",
+       "      <td>1996</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>168164</th>\n",
+       "      <td>Hamlet</td>\n",
+       "      <td>2011</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>177951</th>\n",
+       "      <td>Hamlet</td>\n",
+       "      <td>1964</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>191055</th>\n",
+       "      <td>Hamlet</td>\n",
+       "      <td>2009</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>202622</th>\n",
+       "      <td>Hamlet</td>\n",
+       "      <td>1921</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>208732</th>\n",
+       "      <td>Hamlet</td>\n",
+       "      <td>1976</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>213241</th>\n",
+       "      <td>Hamlet</td>\n",
+       "      <td>1913</td>\n",
+       "    </tr>\n",
+       "  </tbody>\n",
+       "</table>\n",
+       "</div>"
+      ],
+      "text/plain": [
+       "         title  year\n",
+       "20108   Hamlet  1911\n",
+       "23054   Hamlet  2016\n",
+       "53594   Hamlet  1987\n",
+       "65937   Hamlet  1973\n",
+       "74147   Hamlet  2015\n",
+       "80092   Hamlet  1969\n",
+       "92525   Hamlet  1990\n",
+       "95160   Hamlet  2014\n",
+       "100882  Hamlet  1948\n",
+       "103427  Hamlet  2000\n",
+       "123489  Hamlet  1954\n",
+       "135546  Hamlet  1910\n",
+       "153616  Hamlet  1996\n",
+       "168164  Hamlet  2011\n",
+       "177951  Hamlet  1964\n",
+       "191055  Hamlet  2009\n",
+       "202622  Hamlet  1921\n",
+       "208732  Hamlet  1976\n",
+       "213241  Hamlet  1913"
+      ]
+     },
+     "execution_count": 38,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "c = titles\n",
+    "c[c.title == 'Hamlet']"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 39,
+   "metadata": {
+    "collapsed": false
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "<matplotlib.axes._subplots.AxesSubplot at 0x8661630>"
+      ]
+     },
+     "execution_count": 39,
+     "metadata": {},
+     "output_type": "execute_result"
+    },
+    {
+     "data": {
+      "image/png": "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\n",
+      "text/plain": [
+       "<matplotlib.figure.Figure at 0x8649a20>"
+      ]
+     },
+     "metadata": {},
+     "output_type": "display_data"
+    }
+   ],
+   "source": [
+    "titles.year.value_counts().sort_index().plot()#.plot();"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 40,
+   "metadata": {
+    "collapsed": false
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "<matplotlib.axes._subplots.AxesSubplot at 0x86de780>"
+      ]
+     },
+     "execution_count": 40,
+     "metadata": {},
+     "output_type": "execute_result"
+    },
+    {
+     "name": "stderr",
+     "output_type": "stream",
+     "text": [
+      "C:\\Users\\Ruiye\\Anaconda3\\lib\\site-packages\\matplotlib\\collections.py:590: FutureWarning: elementwise comparison failed; returning scalar instead, but in the future will perform elementwise comparison\n",
+      "  if self._edgecolors == str('face'):\n"
+     ]
+    },
+    {
+     "data": {
+      "image/png": "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\n",
+      "text/plain": [
+       "<matplotlib.figure.Figure at 0x86e41d0>"
+      ]
+     },
+     "metadata": {},
+     "output_type": "display_data"
+    }
+   ],
+   "source": [
+    "c = cast\n",
+    "c = c[c.character == 'Kermit the Frog']\n",
+    "c.plot(x='year', y = 'n', kind = 'scatter')"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 41,
+   "metadata": {
+    "collapsed": false
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/html": [
+       "<div>\n",
+       "<table border=\"1\" class=\"dataframe\">\n",
+       "  <thead>\n",
+       "    <tr style=\"text-align: right;\">\n",
+       "      <th></th>\n",
+       "      <th>year</th>\n",
+       "      <th>n</th>\n",
+       "    </tr>\n",
+       "  </thead>\n",
+       "  <tbody>\n",
+       "    <tr>\n",
+       "      <th>891034</th>\n",
+       "      <td>1981</td>\n",
+       "      <td>18</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>891036</th>\n",
+       "      <td>1985</td>\n",
+       "      <td>2</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>891040</th>\n",
+       "      <td>1981</td>\n",
+       "      <td>1</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>891048</th>\n",
+       "      <td>1979</td>\n",
+       "      <td>1</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>891055</th>\n",
+       "      <td>1984</td>\n",
+       "      <td>1</td>\n",
+       "    </tr>\n",
+       "  </tbody>\n",
+       "</table>\n",
+       "</div>"
+      ],
+      "text/plain": [
+       "        year   n\n",
+       "891034  1981  18\n",
+       "891036  1985   2\n",
+       "891040  1981   1\n",
+       "891048  1979   1\n",
+       "891055  1984   1"
+      ]
+     },
+     "execution_count": 41,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "c.head()[['year','n']]"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 42,
+   "metadata": {
+    "collapsed": true
+   },
+   "outputs": [],
+   "source": [
+    "c = cast.set_index"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 43,
+   "metadata": {
+    "collapsed": false
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "3383167"
+      ]
+     },
+     "execution_count": 43,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "len(cast)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 44,
+   "metadata": {
+    "collapsed": false
+   },
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "Wall time: 195 ms\n"
+     ]
+    },
+    {
+     "data": {
+      "text/html": [
+       "<div>\n",
+       "<table border=\"1\" class=\"dataframe\">\n",
+       "  <thead>\n",
+       "    <tr style=\"text-align: right;\">\n",
+       "      <th></th>\n",
+       "      <th>title</th>\n",
+       "      <th>year</th>\n",
+       "      <th>name</th>\n",
+       "      <th>type</th>\n",
+       "      <th>character</th>\n",
+       "      <th>n</th>\n",
+       "    </tr>\n",
+       "  </thead>\n",
+       "  <tbody>\n",
+       "    <tr>\n",
+       "      <th>233918</th>\n",
+       "      <td>Sleuth</td>\n",
+       "      <td>2007</td>\n",
+       "      <td>Kenneth Branagh</td>\n",
+       "      <td>actor</td>\n",
+       "      <td>Other Man on T.V.</td>\n",
+       "      <td>NaN</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>294810</th>\n",
+       "      <td>Sleuth</td>\n",
+       "      <td>1972</td>\n",
+       "      <td>Michael Caine</td>\n",
+       "      <td>actor</td>\n",
+       "      <td>Milo Tindle</td>\n",
+       "      <td>2</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>294811</th>\n",
+       "      <td>Sleuth</td>\n",
+       "      <td>2007</td>\n",
+       "      <td>Michael Caine</td>\n",
+       "      <td>actor</td>\n",
+       "      <td>Andrew</td>\n",
+       "      <td>1</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>337756</th>\n",
+       "      <td>Sleuth</td>\n",
+       "      <td>1972</td>\n",
+       "      <td>Alec Cawthorne</td>\n",
+       "      <td>actor</td>\n",
+       "      <td>Inspector Doppler</td>\n",
+       "      <td>3</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>337757</th>\n",
+       "      <td>Sleuth</td>\n",
+       "      <td>2007</td>\n",
+       "      <td>Alec (II) Cawthorne</td>\n",
+       "      <td>actor</td>\n",
+       "      <td>Inspector Doppler</td>\n",
+       "      <td>NaN</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>1171232</th>\n",
+       "      <td>Sleuth</td>\n",
+       "      <td>2007</td>\n",
+       "      <td>Jude Law</td>\n",
+       "      <td>actor</td>\n",
+       "      <td>Milo</td>\n",
+       "      <td>2</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>1312188</th>\n",
+       "      <td>Sleuth</td>\n",
+       "      <td>1972</td>\n",
+       "      <td>Teddy Martin</td>\n",
+       "      <td>actor</td>\n",
+       "      <td>Police Constable Higgs</td>\n",
+       "      <td>6</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>1327177</th>\n",
+       "      <td>Sleuth</td>\n",
+       "      <td>1972</td>\n",
+       "      <td>John (II) Matthews</td>\n",
+       "      <td>actor</td>\n",
+       "      <td>Detective Sergeant Tarrant</td>\n",
+       "      <td>4</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>1545047</th>\n",
+       "      <td>Sleuth</td>\n",
+       "      <td>1972</td>\n",
+       "      <td>Laurence Olivier</td>\n",
+       "      <td>actor</td>\n",
+       "      <td>Andrew Wyke</td>\n",
+       "      <td>1</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>1635645</th>\n",
+       "      <td>Sleuth</td>\n",
+       "      <td>2007</td>\n",
+       "      <td>Harold Pinter</td>\n",
+       "      <td>actor</td>\n",
+       "      <td>Man on T.V.</td>\n",
+       "      <td>3</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>2458448</th>\n",
+       "      <td>Sleuth</td>\n",
+       "      <td>2007</td>\n",
+       "      <td>Eve (II) Channing</td>\n",
+       "      <td>actress</td>\n",
+       "      <td>Marguerite Wyke</td>\n",
+       "      <td>NaN</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>2458449</th>\n",
+       "      <td>Sleuth</td>\n",
+       "      <td>1972</td>\n",
+       "      <td>Eve (III) Channing</td>\n",
+       "      <td>actress</td>\n",
+       "      <td>Marguerite Wyke</td>\n",
+       "      <td>5</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>3022053</th>\n",
+       "      <td>Sleuth</td>\n",
+       "      <td>2007</td>\n",
+       "      <td>Carmel O'Sullivan</td>\n",
+       "      <td>actress</td>\n",
+       "      <td>Maggie</td>\n",
+       "      <td>NaN</td>\n",
+       "    </tr>\n",
+       "  </tbody>\n",
+       "</table>\n",
+       "</div>"
+      ],
+      "text/plain": [
+       "          title  year                 name     type  \\\n",
+       "233918   Sleuth  2007      Kenneth Branagh    actor   \n",
+       "294810   Sleuth  1972        Michael Caine    actor   \n",
+       "294811   Sleuth  2007        Michael Caine    actor   \n",
+       "337756   Sleuth  1972       Alec Cawthorne    actor   \n",
+       "337757   Sleuth  2007  Alec (II) Cawthorne    actor   \n",
+       "1171232  Sleuth  2007             Jude Law    actor   \n",
+       "1312188  Sleuth  1972         Teddy Martin    actor   \n",
+       "1327177  Sleuth  1972   John (II) Matthews    actor   \n",
+       "1545047  Sleuth  1972     Laurence Olivier    actor   \n",
+       "1635645  Sleuth  2007        Harold Pinter    actor   \n",
+       "2458448  Sleuth  2007    Eve (II) Channing  actress   \n",
+       "2458449  Sleuth  1972   Eve (III) Channing  actress   \n",
+       "3022053  Sleuth  2007    Carmel O'Sullivan  actress   \n",
+       "\n",
+       "                          character   n  \n",
+       "233918            Other Man on T.V. NaN  \n",
+       "294810                  Milo Tindle   2  \n",
+       "294811                       Andrew   1  \n",
+       "337756            Inspector Doppler   3  \n",
+       "337757            Inspector Doppler NaN  \n",
+       "1171232                        Milo   2  \n",
+       "1312188      Police Constable Higgs   6  \n",
+       "1327177  Detective Sergeant Tarrant   4  \n",
+       "1545047                 Andrew Wyke   1  \n",
+       "1635645                 Man on T.V.   3  \n",
+       "2458448             Marguerite Wyke NaN  \n",
+       "2458449             Marguerite Wyke   5  \n",
+       "3022053                      Maggie NaN  "
+      ]
+     },
+     "execution_count": 44,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "%%time\n",
+    "cast[cast.title == 'Sleuth']"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 45,
+   "metadata": {
+    "collapsed": false
+   },
+   "outputs": [],
+   "source": [
+    "c = cast.set_index(['title','year']).sort_index()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 46,
+   "metadata": {
+    "collapsed": false
+   },
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "Wall time: 168 ms\n"
+     ]
+    },
+    {
+     "data": {
+      "text/html": [
+       "<div>\n",
+       "<table border=\"1\" class=\"dataframe\">\n",
+       "  <thead>\n",
+       "    <tr style=\"text-align: right;\">\n",
+       "      <th></th>\n",
+       "      <th></th>\n",
+       "      <th>name</th>\n",
+       "      <th>type</th>\n",
+       "      <th>character</th>\n",
+       "      <th>n</th>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>title</th>\n",
+       "      <th>year</th>\n",
+       "      <th></th>\n",
+       "      <th></th>\n",
+       "      <th></th>\n",
+       "      <th></th>\n",
+       "    </tr>\n",
+       "  </thead>\n",
+       "  <tbody>\n",
+       "    <tr>\n",
+       "      <th rowspan=\"6\" valign=\"top\">Sleuth</th>\n",
+       "      <th>1972</th>\n",
+       "      <td>Michael Caine</td>\n",
+       "      <td>actor</td>\n",
+       "      <td>Milo Tindle</td>\n",
+       "      <td>2</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>1972</th>\n",
+       "      <td>Alec Cawthorne</td>\n",
+       "      <td>actor</td>\n",
+       "      <td>Inspector Doppler</td>\n",
+       "      <td>3</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>1972</th>\n",
+       "      <td>Teddy Martin</td>\n",
+       "      <td>actor</td>\n",
+       "      <td>Police Constable Higgs</td>\n",
+       "      <td>6</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>1972</th>\n",
+       "      <td>John (II) Matthews</td>\n",
+       "      <td>actor</td>\n",
+       "      <td>Detective Sergeant Tarrant</td>\n",
+       "      <td>4</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>1972</th>\n",
+       "      <td>Laurence Olivier</td>\n",
+       "      <td>actor</td>\n",
+       "      <td>Andrew Wyke</td>\n",
+       "      <td>1</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>1972</th>\n",
+       "      <td>Eve (III) Channing</td>\n",
+       "      <td>actress</td>\n",
+       "      <td>Marguerite Wyke</td>\n",
+       "      <td>5</td>\n",
+       "    </tr>\n",
+       "  </tbody>\n",
+       "</table>\n",
+       "</div>"
+      ],
+      "text/plain": [
+       "                           name     type                   character  n\n",
+       "title  year                                                            \n",
+       "Sleuth 1972       Michael Caine    actor                 Milo Tindle  2\n",
+       "       1972      Alec Cawthorne    actor           Inspector Doppler  3\n",
+       "       1972        Teddy Martin    actor      Police Constable Higgs  6\n",
+       "       1972  John (II) Matthews    actor  Detective Sergeant Tarrant  4\n",
+       "       1972    Laurence Olivier    actor                 Andrew Wyke  1\n",
+       "       1972  Eve (III) Channing  actress             Marguerite Wyke  5"
+      ]
+     },
+     "execution_count": 46,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "%%time\n",
+    "c.loc['Sleuth',1972]"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 47,
+   "metadata": {
+    "collapsed": false
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/html": [
+       "<div>\n",
+       "<table border=\"1\" class=\"dataframe\">\n",
+       "  <thead>\n",
+       "    <tr style=\"text-align: right;\">\n",
+       "      <th></th>\n",
+       "      <th>title</th>\n",
+       "      <th>year</th>\n",
+       "      <th>name</th>\n",
+       "      <th>type</th>\n",
+       "      <th>character</th>\n",
+       "      <th>n</th>\n",
+       "    </tr>\n",
+       "  </thead>\n",
+       "  <tbody>\n",
+       "    <tr>\n",
+       "      <th>0</th>\n",
+       "      <td>Sleuth</td>\n",
+       "      <td>1972</td>\n",
+       "      <td>Michael Caine</td>\n",
+       "      <td>actor</td>\n",
+       "      <td>Milo Tindle</td>\n",
+       "      <td>2</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>1</th>\n",
+       "      <td>Sleuth</td>\n",
+       "      <td>1972</td>\n",
+       "      <td>Alec Cawthorne</td>\n",
+       "      <td>actor</td>\n",
+       "      <td>Inspector Doppler</td>\n",
+       "      <td>3</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>2</th>\n",
+       "      <td>Sleuth</td>\n",
+       "      <td>1972</td>\n",
+       "      <td>Teddy Martin</td>\n",
+       "      <td>actor</td>\n",
+       "      <td>Police Constable Higgs</td>\n",
+       "      <td>6</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>3</th>\n",
+       "      <td>Sleuth</td>\n",
+       "      <td>1972</td>\n",
+       "      <td>John (II) Matthews</td>\n",
+       "      <td>actor</td>\n",
+       "      <td>Detective Sergeant Tarrant</td>\n",
+       "      <td>4</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>4</th>\n",
+       "      <td>Sleuth</td>\n",
+       "      <td>1972</td>\n",
+       "      <td>Laurence Olivier</td>\n",
+       "      <td>actor</td>\n",
+       "      <td>Andrew Wyke</td>\n",
+       "      <td>1</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>5</th>\n",
+       "      <td>Sleuth</td>\n",
+       "      <td>1972</td>\n",
+       "      <td>Eve (III) Channing</td>\n",
+       "      <td>actress</td>\n",
+       "      <td>Marguerite Wyke</td>\n",
+       "      <td>5</td>\n",
+       "    </tr>\n",
+       "  </tbody>\n",
+       "</table>\n",
+       "</div>"
+      ],
+      "text/plain": [
+       "    title  year                name     type                   character  n\n",
+       "0  Sleuth  1972       Michael Caine    actor                 Milo Tindle  2\n",
+       "1  Sleuth  1972      Alec Cawthorne    actor           Inspector Doppler  3\n",
+       "2  Sleuth  1972        Teddy Martin    actor      Police Constable Higgs  6\n",
+       "3  Sleuth  1972  John (II) Matthews    actor  Detective Sergeant Tarrant  4\n",
+       "4  Sleuth  1972    Laurence Olivier    actor                 Andrew Wyke  1\n",
+       "5  Sleuth  1972  Eve (III) Channing  actress             Marguerite Wyke  5"
+      ]
+     },
+     "execution_count": 47,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "c.loc[('Sleuth',1972)].reset_index(['year','title'])\n"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 48,
+   "metadata": {
+    "collapsed": false
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "year\n",
+       "1980     2\n",
+       "1990    14\n",
+       "2000    20\n",
+       "2010    11\n",
+       "dtype: int64"
+      ]
+     },
+     "execution_count": 48,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "# Groupby\n",
+    "c = cast\n",
+    "c = c[c.name == 'George Clooney']\n",
+    "c.groupby(c.year//10*10).n.size()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 49,
+   "metadata": {
+    "collapsed": false
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "year  type   \n",
+       "1890  actor           2\n",
+       "      actress         1\n",
+       "1900  actor          54\n",
+       "      actress        16\n",
+       "1910  actor       26788\n",
+       "      actress     15343\n",
+       "1920  actor       47018\n",
+       "      actress     23192\n",
+       "1930  actor      148389\n",
+       "      actress     48477\n",
+       "1940  actor      158390\n",
+       "      actress     50221\n",
+       "1950  actor      150803\n",
+       "      actress     54838\n",
+       "1960  actor      124646\n",
+       "      actress     53789\n",
+       "1970  actor      142324\n",
+       "      actress     62026\n",
+       "1980  actor      186874\n",
+       "      actress     86576\n",
+       "1990  actor      252832\n",
+       "      actress    119776\n",
+       "2000  actor      478039\n",
+       "      actress    257463\n",
+       "2010  actor      574954\n",
+       "      actress    320245\n",
+       "2020  actor          64\n",
+       "      actress        27\n",
+       "dtype: int64"
+      ]
+     },
+     "execution_count": 49,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "c = cast\n",
+    "c.groupby([c.year//10*10,'type']).size()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 50,
+   "metadata": {
+    "collapsed": false
+   },
+   "outputs": [],
+   "source": [
+    "c = cast\n",
+    "c = c[(c.character == 'Kermit the Frog')\n",
+    "     | (c.character == 'Oscar the Grouch')]\n",
+    "g = c.groupby(['character',c.year//10*10]).size()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 51,
+   "metadata": {
+    "collapsed": false
+   },
+   "outputs": [
+    {
+     "name": "stderr",
+     "output_type": "stream",
+     "text": [
+      "C:\\Users\\Ruiye\\Anaconda3\\lib\\site-packages\\pandas\\core\\index.py:4281: FutureWarning: elementwise comparison failed; returning scalar instead, but in the future will perform elementwise comparison\n",
+      "  return np.sum(name == np.asarray(self.names)) > 1\n"
+     ]
+    },
+    {
+     "data": {
+      "text/html": [
+       "<div>\n",
+       "<table border=\"1\" class=\"dataframe\">\n",
+       "  <thead>\n",
+       "    <tr style=\"text-align: right;\">\n",
+       "      <th>character</th>\n",
+       "      <th>Kermit the Frog</th>\n",
+       "      <th>Oscar the Grouch</th>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>year</th>\n",
+       "      <th></th>\n",
+       "      <th></th>\n",
+       "    </tr>\n",
+       "  </thead>\n",
+       "  <tbody>\n",
+       "    <tr>\n",
+       "      <th>1970</th>\n",
+       "      <td>1</td>\n",
+       "      <td>0</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>1980</th>\n",
+       "      <td>4</td>\n",
+       "      <td>1</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>1990</th>\n",
+       "      <td>2</td>\n",
+       "      <td>1</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>2000</th>\n",
+       "      <td>1</td>\n",
+       "      <td>1</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>2010</th>\n",
+       "      <td>1</td>\n",
+       "      <td>0</td>\n",
+       "    </tr>\n",
+       "  </tbody>\n",
+       "</table>\n",
+       "</div>"
+      ],
+      "text/plain": [
+       "character  Kermit the Frog  Oscar the Grouch\n",
+       "year                                        \n",
+       "1970                     1                 0\n",
+       "1980                     4                 1\n",
+       "1990                     2                 1\n",
+       "2000                     1                 1\n",
+       "2010                     1                 0"
+      ]
+     },
+     "execution_count": 51,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "u = g.unstack(0).fillna(0)\n",
+    "u\n"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 52,
+   "metadata": {
+    "collapsed": false
+   },
+   "outputs": [
+    {
+     "name": "stderr",
+     "output_type": "stream",
+     "text": [
+      "C:\\Users\\Ruiye\\Anaconda3\\lib\\site-packages\\pandas\\core\\index.py:4281: FutureWarning: elementwise comparison failed; returning scalar instead, but in the future will perform elementwise comparison\n",
+      "  return np.sum(name == np.asarray(self.names)) > 1\n"
+     ]
+    },
+    {
+     "data": {
+      "text/html": [
+       "<div>\n",
+       "<table border=\"1\" class=\"dataframe\">\n",
+       "  <thead>\n",
+       "    <tr style=\"text-align: right;\">\n",
+       "      <th>year</th>\n",
+       "      <th>1970</th>\n",
+       "      <th>1980</th>\n",
+       "      <th>1990</th>\n",
+       "      <th>2000</th>\n",
+       "      <th>2010</th>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>character</th>\n",
+       "      <th></th>\n",
+       "      <th></th>\n",
+       "      <th></th>\n",
+       "      <th></th>\n",
+       "      <th></th>\n",
+       "    </tr>\n",
+       "  </thead>\n",
+       "  <tbody>\n",
+       "    <tr>\n",
+       "      <th>Kermit the Frog</th>\n",
+       "      <td>1</td>\n",
+       "      <td>4</td>\n",
+       "      <td>2</td>\n",
+       "      <td>1</td>\n",
+       "      <td>1</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>Oscar the Grouch</th>\n",
+       "      <td>NaN</td>\n",
+       "      <td>1</td>\n",
+       "      <td>1</td>\n",
+       "      <td>1</td>\n",
+       "      <td>NaN</td>\n",
+       "    </tr>\n",
+       "  </tbody>\n",
+       "</table>\n",
+       "</div>"
+      ],
+      "text/plain": [
+       "year              1970  1980  1990  2000  2010\n",
+       "character                                     \n",
+       "Kermit the Frog      1     4     2     1     1\n",
+       "Oscar the Grouch   NaN     1     1     1   NaN"
+      ]
+     },
+     "execution_count": 52,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "\n",
+    "g.unstack()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 53,
+   "metadata": {
+    "collapsed": false
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "year\n",
+       "1970    1\n",
+       "1980    3\n",
+       "1990    1\n",
+       "2000    0\n",
+       "2010    1\n",
+       "dtype: float64"
+      ]
+     },
+     "execution_count": 53,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "u['Kermit the Frog']-u['Oscar the Grouch']"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 54,
+   "metadata": {
+    "collapsed": false
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "year  character       \n",
+       "1970  Kermit the Frog     1\n",
+       "      Oscar the Grouch    0\n",
+       "1980  Kermit the Frog     4\n",
+       "      Oscar the Grouch    1\n",
+       "1990  Kermit the Frog     2\n",
+       "      Oscar the Grouch    1\n",
+       "2000  Kermit the Frog     1\n",
+       "      Oscar the Grouch    1\n",
+       "2010  Kermit the Frog     1\n",
+       "      Oscar the Grouch    0\n",
+       "dtype: float64"
+      ]
+     },
+     "execution_count": 54,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "u.stack()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 55,
+   "metadata": {
+    "collapsed": false
+   },
+   "outputs": [
+    {
+     "name": "stderr",
+     "output_type": "stream",
+     "text": [
+      "C:\\Users\\Ruiye\\Anaconda3\\lib\\site-packages\\pandas\\core\\index.py:4281: FutureWarning: elementwise comparison failed; returning scalar instead, but in the future will perform elementwise comparison\n",
+      "  return np.sum(name == np.asarray(self.names)) > 1\n"
+     ]
+    },
+    {
+     "data": {
+      "text/html": [
+       "<div>\n",
+       "<table border=\"1\" class=\"dataframe\">\n",
+       "  <thead>\n",
+       "    <tr>\n",
+       "      <th>character</th>\n",
+       "      <th colspan=\"5\" halign=\"left\">Kermit the Frog</th>\n",
+       "      <th colspan=\"5\" halign=\"left\">Oscar the Grouch</th>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>year</th>\n",
+       "      <th>1970</th>\n",
+       "      <th>1980</th>\n",
+       "      <th>1990</th>\n",
+       "      <th>2000</th>\n",
+       "      <th>2010</th>\n",
+       "      <th>1970</th>\n",
+       "      <th>1980</th>\n",
+       "      <th>1990</th>\n",
+       "      <th>2000</th>\n",
+       "      <th>2010</th>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>extra</th>\n",
+       "      <th></th>\n",
+       "      <th></th>\n",
+       "      <th></th>\n",
+       "      <th></th>\n",
+       "      <th></th>\n",
+       "      <th></th>\n",
+       "      <th></th>\n",
+       "      <th></th>\n",
+       "      <th></th>\n",
+       "      <th></th>\n",
+       "    </tr>\n",
+       "  </thead>\n",
+       "  <tbody>\n",
+       "    <tr>\n",
+       "      <th>1</th>\n",
+       "      <td>1</td>\n",
+       "      <td>4</td>\n",
+       "      <td>2</td>\n",
+       "      <td>1</td>\n",
+       "      <td>1</td>\n",
+       "      <td>NaN</td>\n",
+       "      <td>1</td>\n",
+       "      <td>1</td>\n",
+       "      <td>1</td>\n",
+       "      <td>NaN</td>\n",
+       "    </tr>\n",
+       "  </tbody>\n",
+       "</table>\n",
+       "</div>"
+      ],
+      "text/plain": [
+       "character Kermit the Frog                     Oscar the Grouch                 \\\n",
+       "year                 1970 1980 1990 2000 2010             1970 1980 1990 2000   \n",
+       "extra                                                                           \n",
+       "1                       1    4    2    1    1              NaN    1    1    1   \n",
+       "\n",
+       "character       \n",
+       "year      2010  \n",
+       "extra           \n",
+       "1          NaN  "
+      ]
+     },
+     "execution_count": 55,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "df = g.unstack('character')\n",
+    "df['extra']=1\n",
+    "df = df.set_index('extra', drop =True, append = True)\n",
+    "df.unstack(0)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 56,
+   "metadata": {
+    "collapsed": false
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "character         year\n",
+       "Kermit the Frog   1970    1\n",
+       "                  1980    4\n",
+       "                  1990    2\n",
+       "                  2000    1\n",
+       "                  2010    1\n",
+       "Oscar the Grouch  1980    1\n",
+       "                  1990    1\n",
+       "                  2000    1\n",
+       "dtype: int64"
+      ]
+     },
+     "execution_count": 56,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "g"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {
+    "collapsed": true
+   },
+   "outputs": [],
+   "source": []
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {
+    "collapsed": true
+   },
+   "outputs": [],
+   "source": []
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {
+    "collapsed": true
+   },
+   "outputs": [],
+   "source": []
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {
+    "collapsed": true
+   },
+   "outputs": [],
+   "source": []
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {
+    "collapsed": true
+   },
+   "outputs": [],
+   "source": []
+  }
+ ],
+ "metadata": {
+  "kernelspec": {
+   "display_name": "Python 3",
+   "language": "python",
+   "name": "python3"
+  },
+  "language_info": {
+   "codemirror_mode": {
+    "name": "ipython",
+    "version": 3
+   },
+   "file_extension": ".py",
+   "mimetype": "text/x-python",
+   "name": "python",
+   "nbconvert_exporter": "python",
+   "pygments_lexer": "ipython3",
+   "version": "3.5.0"
+  }
+ },
+ "nbformat": 4,
+ "nbformat_minor": 0
+}
