@@ -1,0 +1,616 @@
+{
+ "cells": [
+  {
+   "cell_type": "code",
+   "execution_count": 1,
+   "metadata": {
+    "collapsed": false
+   },
+   "outputs": [],
+   "source": [
+    "%matplotlib inline\n",
+    "import pandas as pd"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 2,
+   "metadata": {
+    "collapsed": false
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/html": [
+       "<style>body {\n",
+       "    margin: 0;\n",
+       "    font-family: Helvetica;\n",
+       "}\n",
+       "table.dataframe {\n",
+       "    border-collapse: collapse;\n",
+       "    border: none;\n",
+       "}\n",
+       "table.dataframe tr {\n",
+       "    border: none;\n",
+       "}\n",
+       "table.dataframe td, table.dataframe th {\n",
+       "    margin: 0;\n",
+       "    border: 1px solid white;\n",
+       "    padding-left: 0.25em;\n",
+       "    padding-right: 0.25em;\n",
+       "}\n",
+       "table.dataframe th:not(:empty) {\n",
+       "    background-color: #fec;\n",
+       "    text-align: left;\n",
+       "    font-weight: normal;\n",
+       "}\n",
+       "table.dataframe tr:nth-child(2) th:empty {\n",
+       "    border-left: none;\n",
+       "    border-right: 1px dashed #888;\n",
+       "}\n",
+       "table.dataframe td {\n",
+       "    border: 2px solid #ccf;\n",
+       "    background-color: #f4f4ff;\n",
+       "}\n",
+       "h3 {\n",
+       "    color: white;\n",
+       "    background-color: black;\n",
+       "    padding: 0.5em;\n",
+       "}\n",
+       "</style>"
+      ],
+      "text/plain": [
+       "<IPython.core.display.HTML object>"
+      ]
+     },
+     "execution_count": 2,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "from IPython.core.display import HTML\n",
+    "css = open('style-table.css').read() + open('style-notebook.css').read()\n",
+    "HTML('<style>{}</style>'.format(css))"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 3,
+   "metadata": {
+    "collapsed": false
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/html": [
+       "<div>\n",
+       "<table border=\"1\" class=\"dataframe\">\n",
+       "  <thead>\n",
+       "    <tr style=\"text-align: right;\">\n",
+       "      <th></th>\n",
+       "      <th>title</th>\n",
+       "      <th>year</th>\n",
+       "    </tr>\n",
+       "  </thead>\n",
+       "  <tbody>\n",
+       "    <tr>\n",
+       "      <th>0</th>\n",
+       "      <td>Torab al-ghoraba</td>\n",
+       "      <td>1998</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>1</th>\n",
+       "      <td>Long zai tian ya</td>\n",
+       "      <td>1989</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>2</th>\n",
+       "      <td>Jewtopia</td>\n",
+       "      <td>2012</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>3</th>\n",
+       "      <td>Baby Face</td>\n",
+       "      <td>1959</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>4</th>\n",
+       "      <td>The Lucky Break</td>\n",
+       "      <td>2014</td>\n",
+       "    </tr>\n",
+       "  </tbody>\n",
+       "</table>\n",
+       "</div>"
+      ],
+      "text/plain": [
+       "              title  year\n",
+       "0  Torab al-ghoraba  1998\n",
+       "1  Long zai tian ya  1989\n",
+       "2          Jewtopia  2012\n",
+       "3         Baby Face  1959\n",
+       "4   The Lucky Break  2014"
+      ]
+     },
+     "execution_count": 3,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "titles = pd.DataFrame.from_csv('data/titles.csv', index_col=None)\n",
+    "titles.head()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 4,
+   "metadata": {
+    "collapsed": false
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/html": [
+       "<div>\n",
+       "<table border=\"1\" class=\"dataframe\">\n",
+       "  <thead>\n",
+       "    <tr style=\"text-align: right;\">\n",
+       "      <th></th>\n",
+       "      <th>title</th>\n",
+       "      <th>year</th>\n",
+       "      <th>name</th>\n",
+       "      <th>type</th>\n",
+       "      <th>character</th>\n",
+       "      <th>n</th>\n",
+       "    </tr>\n",
+       "  </thead>\n",
+       "  <tbody>\n",
+       "    <tr>\n",
+       "      <th>0</th>\n",
+       "      <td>Suuri illusioni</td>\n",
+       "      <td>1985</td>\n",
+       "      <td>Homo $</td>\n",
+       "      <td>actor</td>\n",
+       "      <td>Guests</td>\n",
+       "      <td>22</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>1</th>\n",
+       "      <td>Gangsta Rap: The Glockumentary</td>\n",
+       "      <td>2007</td>\n",
+       "      <td>Too $hort</td>\n",
+       "      <td>actor</td>\n",
+       "      <td>Himself</td>\n",
+       "      <td>NaN</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>2</th>\n",
+       "      <td>Menace II Society</td>\n",
+       "      <td>1993</td>\n",
+       "      <td>Too $hort</td>\n",
+       "      <td>actor</td>\n",
+       "      <td>Lew-Loc</td>\n",
+       "      <td>27</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>3</th>\n",
+       "      <td>Porndogs: The Adventures of Sadie</td>\n",
+       "      <td>2009</td>\n",
+       "      <td>Too $hort</td>\n",
+       "      <td>actor</td>\n",
+       "      <td>Bosco</td>\n",
+       "      <td>3</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>4</th>\n",
+       "      <td>Stop Pepper Palmer</td>\n",
+       "      <td>2014</td>\n",
+       "      <td>Too $hort</td>\n",
+       "      <td>actor</td>\n",
+       "      <td>Himself</td>\n",
+       "      <td>NaN</td>\n",
+       "    </tr>\n",
+       "  </tbody>\n",
+       "</table>\n",
+       "</div>"
+      ],
+      "text/plain": [
+       "                               title  year       name   type character   n\n",
+       "0                    Suuri illusioni  1985     Homo $  actor    Guests  22\n",
+       "1     Gangsta Rap: The Glockumentary  2007  Too $hort  actor   Himself NaN\n",
+       "2                  Menace II Society  1993  Too $hort  actor   Lew-Loc  27\n",
+       "3  Porndogs: The Adventures of Sadie  2009  Too $hort  actor     Bosco   3\n",
+       "4                 Stop Pepper Palmer  2014  Too $hort  actor   Himself NaN"
+      ]
+     },
+     "execution_count": 4,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "cast = pd.DataFrame.from_csv('data/cast.csv', index_col=None)\n",
+    "cast.head()"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {
+    "collapsed": true
+   },
+   "source": [
+    "### Using groupby(), plot the number of films that have been released each decade in the history of cinema."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 5,
+   "metadata": {
+    "collapsed": false
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "<matplotlib.axes._subplots.AxesSubplot at 0x1da0adba3c8>"
+      ]
+     },
+     "execution_count": 5,
+     "metadata": {},
+     "output_type": "execute_result"
+    },
+    {
+     "data": {
+      "image/png": "iVBORw0KGgoAAAANSUhEUgAAAX8AAAEXCAYAAABF40RQAAAABHNCSVQICAgIfAhkiAAAAAlwSFlz\nAAALEgAACxIB0t1+/AAAGfRJREFUeJzt3XuUnPV93/H3BwSYYAVZNRU3AUoRBsW42NiINr6sDcVK\nTg7ItQNyWoptHR8bNcXHbdxInJ6w7mltlIsptIGTNBAENhQdEzA+UCGB2SRNDAIizEWWEU6FJWEJ\nV1wMvgQpfPrH81s0LCvtrHZGO7O/z+ucPfvM73me7/xmduczz/yey8g2ERFRlwMmuwMREbH/Jfwj\nIiqU8I+IqFDCPyKiQgn/iIgKJfwjIirUVvhLmiHp65K+K2m9pPmSZkpaI+lJSaslzWhZfpmkjZI2\nSDqnpf10SY+VeVe2tB8i6ZbSfr+k4zv7MCMiolW7W/5XAnfZPgV4B7ABWAqssX0ScG+5jaR5wAXA\nPGABcLUklTrXAIttzwXmSlpQ2hcDO0r7FcDyCT+yiIjYozHDX9LhwPtsXwdge5ftF4FzgRVlsRXA\nwjJ9HnCz7Z22NwFPAfMlHQVMt722LHdDyzqttW4FzprQo4qIiL1qZ8t/DvAjSX8m6W8l/U9JhwGz\nbG8vy2wHZpXpo4EtLetvAY4ZpX1raaf83gzNmwvwoqSZ+/KAIiJibO2E/zTgXcDVtt8F/IQyxDPM\nzTUicp2IiIg+Ma2NZbYAW2w/WG5/HVgGbJN0pO1tZUjn2TJ/KzC7Zf1jS42tZXpk+/A6xwHPSJoG\nHG77udZOSMqbS0TEPrCtkW1jbvnb3gZslnRSaTobeAL4JnBRabsIuL1M3wEsknSwpDnAXGBtqfPj\ncqSQgAuBb7SsM1zrYzQ7kEfrS9s/l1122biWH+9P6k9e/X7ue+qn/v6uvyftbPkD/Dvga5IOBr4P\nfBI4EFgpaTGwCTi/BPR6SSuB9cAuYIl392AJcD1wKM3RQ6tK+7XAjZI2AjuARW32KyIi9kFb4W/7\nO8B7Rpl19h6W/xLwpVHaHwZOHaX97ylvHhER0X1T9gzfgYGB1J+i9fu576mf+r1SX3sbE+olktwv\nfY2I6BWS8L7s8I2IiKkn4R8RUaGEf0REhRL+EREVSvhHRFQo4R8RUaGEf0REhdq9vENERLTY/R1V\n7eulc5US/hER+2w8YT7+N4tuyrBPRESFEv4RERVK+EdEVCjhHxFRoYR/RESFEv4RERVK+EdEVCjh\nHxFRoYR/RESFEv4RERVK+EdEVCjhHxFRoYR/RESFEv4RERVK+EdEVCjhHxFRoYR/RESF2gp/SZsk\nPSppnaS1pW2mpDWSnpS0WtKMluWXSdooaYOkc1raT5f0WJl3ZUv7IZJuKe33Szq+kw8yIiJer90t\nfwMDtt9p+4zSthRYY/sk4N5yG0nzgAuAecAC4Grt/rLLa4DFtucCcyUtKO2LgR2l/Qpg+QQfV0RE\n7MV4hn1GfgHlucCKMr0CWFimzwNutr3T9ibgKWC+pKOA6bbXluVuaFmntdatwFnj6FdERIzTeLb8\n75H0kKRPl7ZZtreX6e3ArDJ9NLClZd0twDGjtG8t7ZTfmwFs7wJelDRzPA8kIiLaN63N5X7F9g8l\nHQGskbShdaZtSxrP19hHRMQkaiv8bf+w/P6RpNuAM4Dtko60va0M6TxbFt8KzG5Z/ViaLf6tZXpk\n+/A6xwHPSJoGHG77uZH9GBwcfG16YGCAgYGBdrofEVGNoaEhhoaGxlxO9t432CX9AnCg7ZckHQas\nBr4InE2zk3a5pKXADNtLyw7fm2jeII4B7gFOLJ8OHgAuAdYCdwJX2V4laQlwqu2LJS0CFtpeNKIf\nHquvERH7S3Mcy3gySUxGhknC9sh9tm1t+c8CbisH7EwDvmZ7taSHgJWSFgObgPMBbK+XtBJYD+wC\nlrSk9hLgeuBQ4C7bq0r7tcCNkjYCO4DXBX9ERHTWmFv+vSJb/hHRS/p9yz9n+EZEVCjhHxFRoYR/\nRESFEv4RERVK+EdEVCjhHxFRoYR/RESFEv4RERVK+EdEVCjhHxFRoYR/RESFEv4RERVK+EdEVCjh\nHxFRoYR/RESFEv4RERVK+EdEVCjhHxFRoYR/RESFEv4RERVK+EdEVCjhHxFRoYR/RESFEv4RERVK\n+EdEVCjhHxFRoYR/RESFEv4RERVK+EdEVKit8Jd0oKR1kr5Zbs+UtEbSk5JWS5rRsuwySRslbZB0\nTkv76ZIeK/OubGk/RNItpf1+Scd38gFGRMQbtbvl/zlgPeByeymwxvZJwL3lNpLmARcA84AFwNWS\nVNa5Blhsey4wV9KC0r4Y2FHarwCWT+whRUTEWMYMf0nHAr8G/CkwHOTnAivK9ApgYZk+D7jZ9k7b\nm4CngPmSjgKm215blruhZZ3WWrcCZ+3zo4mIiLa0s+V/BfAF4NWWtlm2t5fp7cCsMn00sKVluS3A\nMaO0by3tlN+bAWzvAl6UNHMcjyEiIsZp2t5mSvp14Fnb6yQNjLaMbUvyaPM6bXBw8LXpgYEBBgZG\n7VJERLWGhoYYGhoacznZe85tSV8CLgR2AW8CfhH4c+A9wIDtbWVI5z7bJ0taCmD78rL+KuAy4Omy\nzCml/ePA+21fXJYZtH2/pGnAD20fMUpfvLe+RkTsT83uzPFkkpiMDJOEbY1s3+uwj+1Lbc+2PQdY\nBHzL9oXAHcBFZbGLgNvL9B3AIkkHS5oDzAXW2t4G/FjS/LID+ELgGy3rDNf6GM0O5IiI6KK9DvuM\nYvht63JgpaTFwCbgfADb6yWtpDkyaBewpGVzfQlwPXAocJftVaX9WuBGSRuBHTRvMhER0UV7Hfbp\nJRn2iYheMqWHfSIiYmpK+EdEVGi8Y/4REX1h98UF2lfT0HLCPyKmsPGNydckwz4RERVK+EdEVCjh\nHxFRoYR/RESFEv4RERVK+EdEVCjhHxFRoYR/RESFEv4RERVK+EdEVCjhHxFRoYR/RESFEv4RERVK\n+EdEVCjhHxFRoYR/RESFEv4RERVK+EdEVCjhHxFRoYR/RESFEv4RERVK+EdEVCjhHxFRoYR/RESF\n9hr+kt4k6QFJj0h6XNJgaZ8paY2kJyWtljSjZZ1lkjZK2iDpnJb20yU9VuZd2dJ+iKRbSvv9ko7v\nwuOMiIgWew1/2z8HPmj7NOA0YIGk+cBSYI3tk4B7y20kzQMuAOYBC4CrJamUuwZYbHsuMFfSgtK+\nGNhR2q8AlnfyAUZExBuNOexj+6dl8mDgIMDAucCK0r4CWFimzwNutr3T9ibgKWC+pKOA6bbXluVu\naFmntdatwFn7/GgiIqItY4a/pAMkPQJsB1aXAJ9le3tZZDswq0wfDWxpWX0LcMwo7VtLO+X3ZgDb\nu4AXJc3ct4cTERHtaGfL/9Uy7HMszVb820fMN82ngYiI6BPT2l3Q9ouS7gM+DGyXdKTtbWVI59my\n2FZgdstqx9Js8W8t0yPbh9c5DnhG0jTgcNvPjdaHwcHB16YHBgYYGBhot/sREVUYGhpiaGhozOXU\nbLjvYab0VmCX7RckHQrcDVwODNDspF0uaSkww/bSssP3JuAMmuGce4ATbVvSA8AlwFrgTuAq26sk\nLQFOtX2xpEXAQtuLRumL99bXiIhWzbEm48kMMZ6M6Xb9TpGEbY1sH2vL/yhghaQDaYaIbrF9l6T7\ngZWSFgObgPMBbK+XtBJYD+wClrQk9hLgeuBQ4C7bq0r7tcCNkjYCO4A3BH9ERHTWXrf8e0m2/CNi\nPLLlX+51D1v+OcM3IqJCCf+IiAol/CMiKpTwj4ioUMI/IqJCCf+IiAol/CMiKpTwj4ioUMI/IqJC\nCf+IiAol/CMiKpTwj4ioUMI/IqJCCf+IiAol/CMiKpTwj4ioUMI/IqJCCf+IiAol/CMiKpTwj4io\nUMI/IqJCCf+IiAol/CMiKpTwj4ioUMI/IqJCCf+IiApNm+wORESdJI17Hdtd6EmdEv4RMYnGE+bj\nf7OIPRtz2EfSbEn3SXpC0uOSLintMyWtkfSkpNWSZrSss0zSRkkbJJ3T0n66pMfKvCtb2g+RdEtp\nv1/S8Z1+oBERsVs7Y/47gc/b/mXgTODfSjoFWAqssX0ScG+5jaR5wAXAPGABcLV2f767Blhsey4w\nV9KC0r4Y2FHarwCWd+TRRUTEqMYMf9vbbD9Spl8GvgscA5wLrCiLrQAWlunzgJtt77S9CXgKmC/p\nKGC67bVluRta1mmtdStw1kQeVERE7N24jvaRdALwTuABYJbt7WXWdmBWmT4a2NKy2haaN4uR7VtL\nO+X3ZgDbu4AXJc0cT98iIqJ9bYe/pDfTbJV/zvZLrfPc7ILPbviIiD7R1tE+kg6iCf4bbd9emrdL\nOtL2tjKk82xp3wrMbln9WJot/q1lemT78DrHAc9ImgYcbvu5kf0YHBx8bXpgYICBgYF2uh8RUY2h\noSGGhobGXE5jHTdbdtauoNkh+/mW9t8rbcslLQVm2F5advjeBJxBM5xzD3CibUt6ALgEWAvcCVxl\ne5WkJcCpti+WtAhYaHvRiH44x/hG7D/dPg6/qT++Qz1rqt8pkrD9hj9mO+H/XuAvgUfZ/UiX0QT4\nSpot9k3A+bZfKOtcCnwK2EUzTHR3aT8duB44FLjL9vBho4cAN9LsT9gBLCo7i1v7kfCP2I/6PTz7\nvX6n7HP494qEf8T+1e/h2e/1O2VP4Z9r+0REVCjhHxFRoYR/RESFcmG3iD6Vq2LGRCT8I/parooZ\n+ybDPhERFUr4R0RUKMM+EV2SMfnoZQn/iK7KmHz0pgz7RERUKOEfEVGhhH9ERIUS/hERFUr4R0RU\nKOEfEVGhhH9ERIUS/hERFUr4R0RUKOEfEVGhhH9ERIUS/hERFUr4R0RUKOEfEVGhhH9ERIUS/hER\nFcqXuUS18k1bUbOEf1Qu37QVdcqwT0REhcYMf0nXSdou6bGWtpmS1kh6UtJqSTNa5i2TtFHSBknn\ntLSfLumxMu/KlvZDJN1S2u+XdHwnH2BERLxRO1v+fwYsGNG2FFhj+yTg3nIbSfOAC4B5ZZ2rtXtg\n9Rpgse25wFxJwzUXAztK+xXA8gk8noiIaMOY4W/7r4DnRzSfC6wo0yuAhWX6POBm2zttbwKeAuZL\nOgqYbnttWe6GlnVaa90KnLUPjyMiIsZhX8f8Z9neXqa3A7PK9NHAlpbltgDHjNK+tbRTfm8GsL0L\neFHSzH3sV0REtGHCO3zdHPuW498iIvrIvh7quV3Skba3lSGdZ0v7VmB2y3LH0mzxby3TI9uH1zkO\neEbSNOBw28+NdqeDg4OvTQ8MDDAwMLCP3Y9OGe+x8jlOPqK7hoaGGBoaGnM5tfNilHQC8E3bp5bb\nv0ezk3a5pKXADNtLyw7fm4AzaIZz7gFOtG1JDwCXAGuBO4GrbK+StAQ41fbFkhYBC20vGqUPTnD0\nnib82/27qKfCf3x9h/H2P/VTfyL1O0UStt+wlTbmlr+km4EPAG+VtBn4XeByYKWkxcAm4HwA2+sl\nrQTWA7uAJS2JvQS4HjgUuMv2qtJ+LXCjpI3ADuANwR8REZ3V1pZ/L8iWf2/Kln/qp3536nfKnrb8\nc4ZvRESFcm2fKS4XL4uI0ST8q9CfFy/LG1dE9yT8o8f15xtXRK/LmH9ERIUS/hERFUr4R0RUKOEf\nEVGhhH9ERIVytM8ky+GMETEZEv49IYczRsT+lWGfiIgKJfwjIiqU8I+IqFDCPyKiQgn/iIgKJfwj\nIiqU8I+IqFDCPyKiQgn/iIgKJfwjIiqU8I+IqFDCPyKiQgn/iIgKJfwjIiqU8I+IqFDCPyKiQgn/\niIgK9Uz4S1ogaYOkjZJ+Z7L7ExExlfVE+Es6EPgfwAJgHvBxSadMpObQ0FAHejZ59SH1J6d26qd+\nb9fvVPb0RPgDZwBP2d5keyfwv4DzJlIw4T+V63ezduqnfm/Xn2rhfwywueX2ltIWERFd0Cvh78nu\nQERETWRPfu5KOhMYtL2g3F4GvGp7ecsyk9/RiIg+ZFsj23ol/KcB3wPOAp4B1gIft/3dSe1YRMQU\nNW2yOwBge5ek3wLuBg4Erk3wR0R0T09s+UdExP7VKzt8IyJiP0r49zBJJ3ew1kGjtL21U/UjepGk\nAySdKemjkv6lpPmS3rDzswv32/Ov3SkR/mq8R9JHJJ3bySe+1J+UfyBg9UQLSPqgpC3ANkmrJc1p\nmb1movXLfRwg6YAyfYikd0ma2Ynao9zXkm7ULbWnl77P6FC9Q4afl3L7Q5J+W9Kvdqj+OzpRZ4z7\nOG74+ZA0R9JvSHp7B+t37bUr6RzgSWAQ+FXg14AvAk9J+nCn7mcPev612xM7fCdC0geAPwReAE4H\n/gaYIWkncKHtzXtbv4365wBXA0/RnHwGcCwwV9IS23dPsP5/38vst0ykdvH7wIeB9cBHgTWSLrT9\n7Q7URtJC4I+BVyV9FrgUeBk4WdLFtu+YQO3/MErzpZLeBGD7K/tau9S/2vaSMv1e4Cbg+zR/28/Y\nvnMi9YEHgQ8Az0v6AvAR4C7g30v6gO2lE6y/TtLf0ZwRf7Pt9ROs9zqSlgKfAV6R9PvAbwN/DQxK\nus72H06wfldfu8BVwNm2N4243znA/wYm9EbT769dbPf1D/AIcESZngPcXqb/BbC6A/U3ACeM0j4H\n2NCB+i/RvMA+AVzU8vMJYEcH6j864vYv0xxWuxBY16Hn/0jgl8pjObm0Hw88PMHaLwO3AJeVn0Hg\n+eHbHej7upbpIeBdZfqXJtr3UufxlumHgUPL9DTgsU70H3g78CWajZNHgaWj/b/uY/31wKHAW8vf\nYvh1dhjwRIf+d7r52t0IHDRK+8E0l5OZaP2+fu32/ZY/cIDtH5XpH9CEDrbXSLqyA/UPBLaO0r6V\nznxyeogmJP565AxJgx2o/4qkI21vA7D9hKSzgDuBf9KB+h6uLekHtjeUxqdbhzz20TzgKzRhM2j7\np5Iusv3FCdYdzeG2/xbA9t91oO8AL0k61fZjwI9ogvRnwEFAR4YNbT9O82nrUknzgUXA/yl/i38+\nwfK7bP9M0ivAT4Hnyn3+pEMnXXb7tXsd8KCkm9n9qX02zXN0XQfq9/VrdyqE/8OSrgXuA84tv5F0\nGJ3Zp9Htf6CPAj8fbYbtEzpQfxnNlvm2lrpbykfu3+pAfSQdYPtV4JMtbdNoQm6f2f4B8LEytHSP\npCsm1tM3OFnSY2V6jqS32H5ezVVmJ9T34jPAVyU9CjwLPCTpL4FTgS93oP7r2H4AeKAMl72/AyXX\nlf/7w4BvASskrQI+RPOpYKK6+tq1/WVJ36C5SOSZpXkr8JvuzBBZX792+/44f0kHA58GTgG+A1xn\n+x8kHQrM8ojxvn28j3k0/0BHl6atwB0d+gfqa5LOoBnC+NmI9hOA99r+aofu5800wz5n2O5EsA33\nsdUztl9RcyTF+23/eQfuYxpwDnASzcbWZuBu2y90oPa/sv21idbZS/2DgN8AXgW+DswHfhN4Gvgj\n2z+ZYP2uv3Zjz/o+/PudpOnAF2i2ImYDr9DsdLzG9vW9Xj+iV5WjlJbSjJHPormA5LPA7cDlE30D\n7vf6fX+oZzlM7D5JX5U0W9IaSS9KelDSOztQf7qk/yzpCUk/lvT/JD0g6RMd6D7A14D/S/NFNoM0\nRyhcCHxI0pd6vX43n5891L6/U899t/+2U7R+3zz/wEqaAwQGgJm2ZwIfpDm6aGXt9ft+y1/Sg8Dv\nAjNoDo36PM1H1A8B/8X2P5tg/TuA24B7aD4Cv5nm0Lr/BGyxfekE6z9q+x0ttx+y/e6yw/G7tt/W\n4/W79vzsh+c+9ad2/SdtnzTeebXUn/DhYJP9w+sP1/vBiHmPdKD+yMOtHiq/DwC+14H63wbeV6bP\noxkPHp7XD/W79vzsh+c+9ad2/TXAf6TZfzDcdiTwO8A9tdfv+2Ef4O8lfVjS+YAlfQReO4FkVwfq\n/0TS+0rN84AdAG6ObumEzwJfkfQCzR/6knJfRwB/1Af1u/n8dPu5T/2pXf8CmnMU/kLS85Kepzmf\n4x8B51dff6LvHpP9A5xGcyr1Kpoz9q6iGRNbD/xKB+r/U5ozNV+gObvxbaX9COCSLj+2T/V6/W4+\nP91+7lN/atcvtU4Bzgamj2hfUHv9CXeul3+AT3a5frfDeXOf1+/a89MPb4ypP7n1aT7lfo/m6Jin\ngYUt8zpxdntf1+/7Hb57I2mz7dm9XF+7TzIazdtsH9zL9ce47649//3wt039ya0v6XHgTNsvqzmn\n41bgRtv/TdI62xM6GrDf6/f9Gb5jhNusXq8P/GOawzCfH2Xe3/R6/W4+P/3+t039ya1PczTjywC2\nN5X9gLdKOp7OXF6jr+v3ffjT5+FJc52ON9teN3KGpL/og/rdfH76/W+b+pNb/1lJp9l+BKBsQf86\ncC3Qicth93X9qRD+fR2etj+1l3kf7/X6dPf56eu/bepPev1/A+xsbbC9U9JFwJ/UXn9Kj/lHRMTo\npsJx/hERMU4J/4iICiX8IyIqlPCPiKhQwj9iP1FnvhoyoiPyzxgxCklflPS5ltv/VdIlkr4gaa2k\n76jle1ol3SbpIUmPS/p0S/vLkv5A0iPs/irBiEmX8I8Y3XU0x1kPb7FfQPNdqifaPgN4J3D68FUp\naa5F827gPcAlkt5S2n8BuN/2abY7ceJSREdMhZO8IjrO9tOSdkg6jeYa6utogv0cScMnJR0GnAj8\nFfA5NV80D83XZc4F1gL/QHNNloiekvCP2LM/BT5Jc52Z64CzgC/bft3ZlZIGyrwzbf9c0n3Am8rs\nnztnUkYPyrBPxJ7dRnPtmXfTfF/E3cCnJB0GIOmY8qU4vwg8X4L/ZDK2H30gW/4Re1Cuo/ItmmA3\nsEbSKcC3JQG8BPxrmjeGz0paT3P99W+3ltnP3Y5oS67tE7EHZUfvw8DHbH9/svsT0UkZ9okYhaR5\nwEaaL8pO8MeUky3/iIgKZcs/IqJCCf+IiAol/CMiKpTwj4ioUMI/IqJCCf+IiAr9f9iqA9sb7lOa\nAAAAAElFTkSuQmCC\n",
+      "text/plain": [
+       "<matplotlib.figure.Figure at 0x1da669bf2e8>"
+      ]
+     },
+     "metadata": {},
+     "output_type": "display_data"
+    }
+   ],
+   "source": [
+    "t = titles\n",
+    "t.groupby(t.year//10).size().plot('bar')\n"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {
+    "collapsed": true
+   },
+   "source": [
+    "### Use groupby() to plot the number of \"Hamlet\" films made each decade."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 8,
+   "metadata": {
+    "collapsed": false
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "<matplotlib.axes._subplots.AxesSubplot at 0x1da00b0efd0>"
+      ]
+     },
+     "execution_count": 8,
+     "metadata": {},
+     "output_type": "execute_result"
+    },
+    {
+     "data": {
+      "image/png": "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\nAElFTkSuQmCC\n",
+      "text/plain": [
+       "<matplotlib.figure.Figure at 0x1da003f4e80>"
+      ]
+     },
+     "metadata": {},
+     "output_type": "display_data"
+    }
+   ],
+   "source": [
+    "t = titles\n",
+    "t = t[t.title == 'Hamlet']\n",
+    "t.groupby(t.year//10*10).size().plot('bar')"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {
+    "collapsed": true
+   },
+   "source": [
+    "### How many leading (n=1) roles were available to actors, and how many to actresses, in each year of the 1950s?"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 13,
+   "metadata": {
+    "collapsed": false
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "year  type   \n",
+       "1950  actor      605\n",
+       "      actress    278\n",
+       "1951  actor      636\n",
+       "      actress    273\n",
+       "1952  actor      592\n",
+       "      actress    284\n",
+       "1953  actor      638\n",
+       "      actress    294\n",
+       "1954  actor      629\n",
+       "      actress    298\n",
+       "1955  actor      614\n",
+       "      actress    271\n",
+       "1956  actor      621\n",
+       "      actress    294\n",
+       "1957  actor      711\n",
+       "      actress    290\n",
+       "1958  actor      700\n",
+       "      actress    278\n",
+       "1959  actor      686\n",
+       "      actress    299\n",
+       "dtype: int64"
+      ]
+     },
+     "execution_count": 13,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "c = cast\n",
+    "c = c[c.n==1]\n",
+    "c = c[c.year//10 == 195]\n",
+    "c.groupby(['year','type']).size()"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {
+    "collapsed": true
+   },
+   "source": [
+    "### In the 1950s decade taken as a whole, how many total roles were available to actors, and how many to actresses, for each \"n\" number 1 through 5?"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 14,
+   "metadata": {
+    "collapsed": false
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "n  type   \n",
+       "1  actor      6432\n",
+       "   actress    2859\n",
+       "2  actor      4432\n",
+       "   actress    4437\n",
+       "3  actor      5458\n",
+       "   actress    3052\n",
+       "4  actor      5443\n",
+       "   actress    2780\n",
+       "5  actor      5471\n",
+       "   actress    2474\n",
+       "dtype: int64"
+      ]
+     },
+     "execution_count": 14,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "c = cast\n",
+    "c = c[c.year//10*10 == 1950]\n",
+    "c = c[(c.n>=1) & (c.n<=5)]\n",
+    "c.groupby(['n','type']).size()"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {
+    "collapsed": true
+   },
+   "source": [
+    "### Use groupby() to determine how many roles are listed for each of the Pink Panther movies."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 19,
+   "metadata": {
+    "collapsed": false
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/html": [
+       "<div>\n",
+       "<table border=\"1\" class=\"dataframe\">\n",
+       "  <thead>\n",
+       "    <tr style=\"text-align: right;\">\n",
+       "      <th></th>\n",
+       "      <th>n</th>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>year</th>\n",
+       "      <th></th>\n",
+       "    </tr>\n",
+       "  </thead>\n",
+       "  <tbody>\n",
+       "    <tr>\n",
+       "      <th>1963</th>\n",
+       "      <td>15</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>2006</th>\n",
+       "      <td>50</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>2016</th>\n",
+       "      <td>NaN</td>\n",
+       "    </tr>\n",
+       "  </tbody>\n",
+       "</table>\n",
+       "</div>"
+      ],
+      "text/plain": [
+       "       n\n",
+       "year    \n",
+       "1963  15\n",
+       "2006  50\n",
+       "2016 NaN"
+      ]
+     },
+     "execution_count": 19,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "c = cast\n",
+    "c = c[c.title == 'The Pink Panther']\n",
+    "c = c.sort_values('n').groupby(['year'])[['n']].max()\n",
+    "c"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {
+    "collapsed": true
+   },
+   "source": [
+    "### List, in order by year, each of the films in which Frank Oz has played more than 1 role."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 24,
+   "metadata": {
+    "collapsed": false
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "year  title                                   \n",
+       "1979  The Muppet Movie                            8\n",
+       "1981  An American Werewolf in London              2\n",
+       "      The Great Muppet Caper                      6\n",
+       "1982  The Dark Crystal                            2\n",
+       "1984  The Muppets Take Manhattan                  7\n",
+       "1985  Sesame Street Presents: Follow that Bird    3\n",
+       "1992  The Muppet Christmas Carol                  7\n",
+       "1996  Muppet Treasure Island                      4\n",
+       "1999  Muppets from Space                          4\n",
+       "      The Adventures of Elmo in Grouchland        3\n",
+       "dtype: int64"
+      ]
+     },
+     "execution_count": 24,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "c = cast\n",
+    "c = c[c.name == 'Frank Oz']\n",
+    "g = c.groupby(['year','title']).size()\n",
+    "g[g>1]"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {
+    "collapsed": true
+   },
+   "source": [
+    "### List each of the characters that Frank Oz has portrayed at least twice."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 27,
+   "metadata": {
+    "collapsed": false
+   },
+   "outputs": [
+    {
+     "name": "stderr",
+     "output_type": "stream",
+     "text": [
+      "C:\\Users\\Ruiye\\Anaconda3\\lib\\site-packages\\ipykernel\\__main__.py:4: FutureWarning: order is deprecated, use sort_values(...)\n"
+     ]
+    },
+    {
+     "data": {
+      "text/plain": [
+       "character\n",
+       "Grover            2\n",
+       "Bert              3\n",
+       "Cookie Monster    3\n",
+       "Fozzie Bear       4\n",
+       "Sam the Eagle     5\n",
+       "Animal            6\n",
+       "Miss Piggy        6\n",
+       "Yoda              6\n",
+       "dtype: int64"
+      ]
+     },
+     "execution_count": 27,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "c = cast\n",
+    "c = c[c.name == 'Frank Oz']\n",
+    "g = c.groupby(['character']).size()\n",
+    "g[g>=2].order()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {
+    "collapsed": true
+   },
+   "outputs": [],
+   "source": []
+  }
+ ],
+ "metadata": {
+  "kernelspec": {
+   "display_name": "Python 3",
+   "language": "python",
+   "name": "python3"
+  },
+  "language_info": {
+   "codemirror_mode": {
+    "name": "ipython",
+    "version": 3
+   },
+   "file_extension": ".py",
+   "mimetype": "text/x-python",
+   "name": "python",
+   "nbconvert_exporter": "python",
+   "pygments_lexer": "ipython3",
+   "version": "3.5.1"
+  }
+ },
+ "nbformat": 4,
+ "nbformat_minor": 0
+}
